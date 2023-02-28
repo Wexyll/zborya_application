@@ -1,4 +1,4 @@
-# zboryar_application
+# zbroya_application
 
 A new Flutter project.
 
