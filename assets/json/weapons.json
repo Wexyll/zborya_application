@@ -1,0 +1,18 @@
+{
+  "weapons": [{
+    "Name": "SV98",
+    "Type": "Sniper",
+    "Caliber": "7.62×54mmR"
+  },
+    {
+      "Name": "M249",
+      "Type": "Machinegun",
+      "Caliber": "5.56×45mm NATO"
+    },
+    {
+      "Name": "F2000",
+      "Type": "Rifle",
+      "Caliber": "5.56×45mm NATO"
+    }
+  ]
+}

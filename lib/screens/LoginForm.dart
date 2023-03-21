@@ -41,7 +41,7 @@ class _LoginFormState extends State<LoginForm> {
           children: [
             //Spacer(),
             Text(
-              "Zbroyar",
+              "Zbroya",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

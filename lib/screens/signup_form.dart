@@ -57,7 +57,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
           //Spacer(),
           SizedBox(height: 60,),
           Text(
-            "Zbroyar",
+            "Zbroya",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.white,
