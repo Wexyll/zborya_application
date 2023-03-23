@@ -8,6 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../database/storage.dart';
+import 'database/hive/model/squadWeapon.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -35,6 +36,9 @@ void main() async {
 
   Hive.registerAdapter(InventoryWeaponAdapter());
   await Hive.openBox<InventoryWeapon>('inventoryWeapons');
+
+  Hive.registerAdapter(squadWeaponAdapter());
+  await Hive.openBox<squadWeapon>('squadWeapons');
 
   runApp(MyApp(
     defaultHome: page,

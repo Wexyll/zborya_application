@@ -211,6 +211,8 @@ class _cameraPageState extends State<cameraPage> {
       weapon += '${object.labels.map((e) => e.text)}';
     }
     weapon = weapon.replaceAll(RegExp(r'\(|\)'), '');
+    print(weapon);
+
 
     //Creating hashmap of weapons that have been scanned from object detector
     if(wMap.isEmpty && weapon != ''){ //If nothing is added yet
@@ -220,19 +222,6 @@ class _cameraPageState extends State<cameraPage> {
     } else  if(!wMap.containsKey(weapon) && weapon != ''){ //If it is a new weapon
       wMap[weapon] = 1;
     }
-  }
-
-  //Hive Functionality to add a weapon to Hive
-  addWeapon(String name, num quantity, String type, String caliber, String user) async {
-    final weapon = InventoryWeapon()
-      ..Name = name
-      ..Quantity = quantity
-      ..Type = type
-      ..Caliber = caliber
-      ..User = user;
-
-    final box = Boxes.getWeapons();
-    box.add(weapon);
   }
 
   @override
@@ -292,20 +281,23 @@ class _cameraPageState extends State<cameraPage> {
                     //Adding an instance of an object to the weapons list of Weapon Objects
                     for(int j = 0; j <= data["weapons"].length-1; j++) {
                       if(wMap.containsKey(data["weapons"][j]["Name"])){
-                        wList.add(Weapon.create(name: data["weapons"][j]["Name"], quantity: wMap[data["weapons"][0]["Name"]], type: data["weapons"][0]["Type"], caliber: data["weapons"][0]["Caliber"]));
+                        wList.add(Weapon.create(name: data["weapons"][j]["Name"], quantity: wMap[data["weapons"][j]["Name"]], type: data["weapons"][j]["Type"], caliber: data["weapons"][j]["Caliber"]));
                       }
                     }
 
                     //Pushing Data to a new page
                     print(wList[0].caliber);
-                    Navigator.push(
+                    await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => confirmWeapons(wpnList: wList,),
                         ));
+                    wList.clear();
                   } else{
                     scanning = false;
                   }
+                  // wList = [];
+                  // wMap.clear();
                 }
               },
               //Changing Circle Icon Color

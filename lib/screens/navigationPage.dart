@@ -46,11 +46,11 @@ class _navigationPageState extends State<navigationPage> {
               tabs: [
                 GButton(
                   icon: Icons.storage,
-                  text: 'Inventory',
+                  text: 'Squad',
                 ),
                 GButton(
                   icon: Icons.data_usage,
-                  text: 'Squad',
+                  text: 'Inventory',
                 ),
                 GButton(
                   icon: Icons.camera_alt,
