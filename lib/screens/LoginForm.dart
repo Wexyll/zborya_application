@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zboryar_application/constants/constants.dart';
@@ -9,9 +10,7 @@ import 'package:zboryar_application/screens/navigationPage.dart';
 import '../database/item.dart';
 import '../database/storage.dart';
 import 'cameraScreen/camera.dart';
-
-
-
+import 'forgotPassword.dart';
 
 class LoginForm extends StatefulWidget {
   LoginForm({Key? key}) : super(key: key);
@@ -21,6 +20,8 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  int failure = 3;
+
   final StorageService _storageService = StorageService();
 
   final TextEditingController username = TextEditingController();
@@ -48,12 +49,15 @@ class _LoginFormState extends State<LoginForm> {
                 fontSize: 40,
               ),
             ),
-            SizedBox(height: 26,),
+            SizedBox(
+              height: 26,
+            ),
             Form(
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: defaultPadding),
                     child: TextFormField(
                       controller: username,
                       obscureText: false,
@@ -63,13 +67,14 @@ class _LoginFormState extends State<LoginForm> {
                         fillColor: Colors.white38,
                         hintStyle: TextStyle(color: Colors.white),
                         contentPadding: EdgeInsets.symmetric(
-                            vertical: defaultPadding * 1.2, horizontal: defaultPadding),
+                            vertical: defaultPadding * 1.2,
+                            horizontal: defaultPadding),
                       ),
                     ),
                   ),
-
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: defaultPadding),
                     child: TextFormField(
                       controller: password,
                       obscureText: true,
@@ -79,7 +84,8 @@ class _LoginFormState extends State<LoginForm> {
                         fillColor: Colors.white38,
                         hintStyle: TextStyle(color: Colors.white),
                         contentPadding: EdgeInsets.symmetric(
-                            vertical: defaultPadding * 1.2, horizontal: defaultPadding),
+                            vertical: defaultPadding * 1.2,
+                            horizontal: defaultPadding),
                       ),
                     ),
                   ),
@@ -93,23 +99,76 @@ class _LoginFormState extends State<LoginForm> {
                 onPressed: () async {
                   _user = await _storageService.User();
                   _pass = await _storageService.Pass();
-                  if(_user == null){
-                    var snackbar = SnackBar(content: Text("Username Does Not Exist"));
+                  if (_user == null) {
+                    failure = failure -1;
+                    var snackbar =
+                        SnackBar(content: Text("Username Does Not Exist"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  }
-                  else if(_user != username.text){
-                    var snackbar = SnackBar(content: Text("Username is Incorrect"));
+                  } else if (_user != username.text) {
+                    failure = failure -1;
+                    var snackbar =
+                        SnackBar(content: Text("Username is Incorrect"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if(_pass != password.text){
-                    var snackbar = SnackBar(content: Text("Password is Incorrect"));
+                  } else if (_pass != password.text) {
+                    failure = failure -1;
+                    var snackbar =
+                        SnackBar(content: Text("Password is Incorrect"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  }else{
-                    final encryptData eIsLoggedIn = encryptData("isLoggedIn", "true");
+                  } else {
+                    failure = 3;
+                    final encryptData eIsLoggedIn =
+                        encryptData("isLoggedIn", "true");
                     _storageService.writeSecureData(eIsLoggedIn);
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => navigationPage()),
                     );
+                  }
+                  if(failure == 1){
+                    AnimatedSnackBar(
+                      mobileSnackBarPosition: MobileSnackBarPosition.top,
+                      duration: Duration(milliseconds: 2000),
+                      snackBarStrategy: RemoveSnackBarStrategy(),
+                      builder: ((context) {
+                        return Container(
+                          height: 40,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(20)),
+                            color: bg_login,
+                          ),
+                          child: Text('One Try Remaining', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),),
+                        );
+                      }),
+                    ).show(context);
+                  }
+                  if(failure <= 0){
+                    final StorageService _storageService = StorageService();
+                    _storageService.deleteAllSecureData();
+                    AnimatedSnackBar(
+                      mobileSnackBarPosition: MobileSnackBarPosition.top,
+                      duration: Duration(milliseconds: 2000),
+                      snackBarStrategy: RemoveSnackBarStrategy(),
+                      builder: ((context) {
+                        return Container(
+                          height: 40,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(20)),
+                            color: bg_login,
+                          ),
+                          child: Text('Deleting Data', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),),
+                        );
+                      }),
+                    ).show(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -128,7 +187,38 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                final StorageService _storageService = StorageService();
+                String? _Question1 = await _storageService.Question1();
+                String? _Question2 = await _storageService.Question2();
+                print(_Question1);
+
+                if (_Question1 == null) {
+                  AnimatedSnackBar(
+                    mobileSnackBarPosition: MobileSnackBarPosition.top,
+                    duration: Duration(milliseconds: 2000),
+                    snackBarStrategy: RemoveSnackBarStrategy(),
+                    builder: ((context) {
+                      return Container(
+                        height: 40,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: bg_login,
+                        ),
+                        child: Text('No Account Created', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
+                      );
+                    }),
+                  ).show(context);
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => forgotPassword(
+                            question1: _Question1, question2: _Question2)),
+                  );
+                }
+              },
               child: Text(
                 "Forgot Password?",
                 style: TextStyle(

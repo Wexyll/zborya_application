@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:hive/hive.dart';
@@ -22,6 +25,8 @@ class generalInventory extends StatefulWidget {
 class _generalInventoryState extends State<generalInventory> {
   String dropDownValue = 'Sniper';
   int quant = 0;
+  final TextEditingController rounds = TextEditingController();
+  final TextEditingController mags = TextEditingController();
   final TextEditingController name = TextEditingController();
   final TextEditingController quantity = TextEditingController();
   final TextEditingController type = TextEditingController();
@@ -134,6 +139,32 @@ class _generalInventoryState extends State<generalInventory> {
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                     ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    TextFormField(
+                      controller: rounds,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        hintText: "Round Count",
+                        filled: true,
+                        fillColor: Colors.grey,
+                        hintStyle: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    TextFormField(
+                      controller: mags,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        hintText: "Magazine Count",
+                        filled: true,
+                        fillColor: Colors.grey,
+                        hintStyle: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -143,8 +174,15 @@ class _generalInventoryState extends State<generalInventory> {
                     if (name.text != '' && quant != 0 && caliber.text != '') {
                       final StorageService _storageService = StorageService();
                       String? _User = await _storageService.User();
-                      addWeapon(name.text, quant, dropDownValue, caliber.text,
-                          _User!);
+                      int roundC = 0;
+                      int magC = 0;
+                      if (rounds.text != '') {
+                        roundC = int.parse(rounds.text);
+                      }
+                      if(mags.text != '') {
+                        magC = int.parse(mags.text);
+                      }
+                      addWeapon(name.text, quant, dropDownValue, caliber.text, _User!, roundC, magC);
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -198,13 +236,15 @@ class _generalInventoryState extends State<generalInventory> {
         );
       });
   addWeapon(String name, num quantity, String type, String caliber,
-      String user) async {
+      String user, int rounds, int mags) async {
     final weapon = InventoryWeapon()
       ..Name = name
       ..Quantity = quantity
       ..Type = type
       ..Caliber = caliber
-      ..User = user;
+      ..User = user
+      ..RoundCount = rounds
+      ..MagCount = mags;
 
     final box = Boxes.getWeapons();
     box.add(weapon);

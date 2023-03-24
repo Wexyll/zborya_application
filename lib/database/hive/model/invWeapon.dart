@@ -18,4 +18,10 @@ class InventoryWeapon extends HiveObject{
 
   @HiveField(4)
   late String User;
+
+  @HiveField(5)
+  late int RoundCount;
+
+  @HiveField(6)
+  late int MagCount;
 }

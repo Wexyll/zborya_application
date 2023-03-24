@@ -77,4 +77,55 @@ class StorageService {
     log("Username: $_Value");
     return _Value;
   }
+
+  Future<String?> Question1() async{
+    final StorageService _storageService = StorageService();
+    final TextEditingController _keyControl = TextEditingController();
+    String? _Value;
+    _keyControl.text ="Question1";
+    _Value = await _storageService.readSecureData(_keyControl.text);
+    log("Question1: $_Value");
+    return _Value;
+  }
+
+  Future<String?> Question2() async{
+    final StorageService _storageService = StorageService();
+    final TextEditingController _keyControl = TextEditingController();
+    String? _Value;
+    _keyControl.text ="Question2";
+    _Value = await _storageService.readSecureData(_keyControl.text);
+    log("Question2: $_Value");
+    return _Value;
+  }
+
+  Future<String?> Answer1() async{
+    final StorageService _storageService = StorageService();
+    final TextEditingController _keyControl = TextEditingController();
+    String? _Value;
+    _keyControl.text ="Question1";
+    _Value = await _storageService.readSecureData(_keyControl.text);
+    log("Question1: $_Value");
+    return _Value;
+  }
+
+  Future<String?> Answer(String Answer) async{
+    final StorageService _storageService = StorageService();
+    final TextEditingController _keyControl = TextEditingController();
+    String? _Value;
+    _keyControl.text =Answer;
+    _Value = await _storageService.readSecureData(_keyControl.text);
+    log("${Answer}: $_Value");
+    return _Value;
+  }
+
+  Future<String?> Password() async{
+    final StorageService _storageService = StorageService();
+    final TextEditingController _keyControl = TextEditingController();
+    String? _Value;
+    _keyControl.text ="Password";
+    _Value = await _storageService.readSecureData(_keyControl.text);
+    log("Password: $_Value");
+    return _Value;
+  }
+
 }

@@ -3,9 +3,13 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:zboryar_application/screens/inventoryScreens/squadInventory.dart';
 
 import '../constants/constants.dart';
+import '../database/item.dart';
+import '../database/storage.dart';
+import 'LoginForm.dart';
 import 'cameraScreen/camera.dart';
 import 'inventoryScreens/generalInventory.dart';
 import 'inventoryScreens/logistics.dart';
+import 'login.dart';
 
 class navigationPage extends StatefulWidget {
   @override
@@ -64,6 +68,43 @@ class _navigationPageState extends State<navigationPage> {
             ),
             ),
           ),
+    drawer: NavigationDrawer(),
+  );
+}
+class NavigationDrawer extends StatelessWidget{
+  NavigationDrawer({Key? key}) : super(key: key)
+  {}
+  @override
+  Widget build(BuildContext context) => Drawer(
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          buildMenuItems(context),
+        ],
+      ),
+    ),
   );
 
+
+  Widget buildMenuItems(BuildContext context) => Container(
+    padding: const EdgeInsets.all(24),
+    child: Wrap(
+      runSpacing: 12,
+      children: [ListTile(
+          leading: const Icon(Icons.logout),
+          title: const Text("Logout"),
+          onTap: () async {
+            final StorageService _storageService = StorageService();
+            final encryptData eIsLoggedIn = encryptData("isLoggedIn", "true");
+            _storageService.deleteSecureData(eIsLoggedIn);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        ),
+  ],
+    ),
+  );
 }

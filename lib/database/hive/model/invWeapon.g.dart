@@ -21,13 +21,15 @@ class InventoryWeaponAdapter extends TypeAdapter<InventoryWeapon> {
       ..Quantity = fields[1] as num
       ..Type = fields[2] as String
       ..Caliber = fields[3] as String
-      ..User = fields[4] as String;
+      ..User = fields[4] as String
+      ..RoundCount = fields[5] as int
+      ..MagCount = fields[6] as int;
   }
 
   @override
   void write(BinaryWriter writer, InventoryWeapon obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.Name)
       ..writeByte(1)
@@ -37,7 +39,11 @@ class InventoryWeaponAdapter extends TypeAdapter<InventoryWeapon> {
       ..writeByte(3)
       ..write(obj.Caliber)
       ..writeByte(4)
-      ..write(obj.User);
+      ..write(obj.User)
+      ..writeByte(5)
+      ..write(obj.RoundCount)
+      ..writeByte(6)
+      ..write(obj.MagCount);
   }
 
   @override

@@ -22,8 +22,6 @@ void main() async {
   Widget page;
   _Value = await _storageService.check();
 
-  //TODO: Add pin code
-
   if (_Value == null) {
     log("Null Value Found");
     page = LoginScreen();

@@ -281,7 +281,7 @@ class _cameraPageState extends State<cameraPage> {
                     //Adding an instance of an object to the weapons list of Weapon Objects
                     for(int j = 0; j <= data["weapons"].length-1; j++) {
                       if(wMap.containsKey(data["weapons"][j]["Name"])){
-                        wList.add(Weapon.create(name: data["weapons"][j]["Name"], quantity: wMap[data["weapons"][j]["Name"]], type: data["weapons"][j]["Type"], caliber: data["weapons"][j]["Caliber"]));
+                        wList.add(Weapon.create(name: data["weapons"][j]["Name"], quantity: wMap[data["weapons"][j]["Name"]], type: data["weapons"][j]["Type"], caliber: data["weapons"][j]["Caliber"], roundC: data["weapons"][j]["Round_Count"], magC: data["weapons"][j]["Mag_Count"]));
                       }
                     }
 
@@ -316,6 +316,7 @@ class _cameraPageState extends State<cameraPage> {
           ),
         )),
       );
+
       //Snackbar on press of the addition button and calling of the addition function
       if (scanning == true) {
         stackChildren.add(

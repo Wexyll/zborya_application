@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -59,7 +62,7 @@ class _confirmWeaponsState extends State<confirmWeapons> {
           final StorageService _storageService = StorageService();
           String? _User = await _storageService.User();
           for(int i = 0; i<= my_list.length-1; i++){
-            addWeapon(my_list[i].name, my_list[i].quantity, my_list[i].type, my_list[i].caliber, _User!);
+            addWeapon(my_list[i].name, my_list[i].quantity, my_list[i].type, my_list[i].caliber, _User!, my_list[i].roundC, my_list[i].magC);
           }
           Navigator.of(context).pop();
         },
@@ -107,13 +110,15 @@ class _confirmWeaponsState extends State<confirmWeapons> {
 
   );
   //Hive Functionality to add a weapon to Hive
-  addWeapon(String name, num quantity, String type, String caliber, String user) async {
+  addWeapon(String name, num quantity, String type, String caliber, String user, int rounds, int mags) async {
     final weapon = InventoryWeapon()
       ..Name = name
       ..Quantity = quantity
       ..Type = type
       ..Caliber = caliber
-      ..User = user;
+      ..User = user
+      ..RoundCount = rounds
+      ..MagCount = mags;
 
     final box = Boxes.getWeapons();
     box.add(weapon);

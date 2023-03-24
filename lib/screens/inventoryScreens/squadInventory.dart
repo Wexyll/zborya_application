@@ -61,6 +61,7 @@ class _squadInventoryState extends State<squadInventory> {
         backgroundColor: bg_login,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // drawer: const NavigationDrawer(),
     );
   }
 
@@ -91,7 +92,12 @@ class _squadInventoryState extends State<squadInventory> {
           ),
           itemBuilder: (c, weapons) {
             return Dismissible(
-              key: Key(weapons.Name),
+              background: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.red,
+              ),),
+              key: Key(weapons.key.toString()),
               onDismissed: (direction) {
                 setState(() {
                   weapons.delete();
@@ -103,9 +109,9 @@ class _squadInventoryState extends State<squadInventory> {
                 padding: EdgeInsets.all(15),
                 margin: EdgeInsets.all(6),
                 color: Colors.grey[400],
-                titleText: '${weapons.Name} - ID: ${weapons.Serial_Number}',
-                subTitleText: '${weapons.Soldier}',
-                description: Text('${weapons.Caliber}'),
+                titleText: '${weapons.Name} - ID: ${weapons.Soldier}',
+                subTitleText: '${weapons.Caliber}',
+                description: Text('${weapons.Serial_Number}'),
                 icon: SvgPicture.asset(
                   "assets/icon/${weapons.Type}.svg",
                   width: 35,
@@ -143,7 +149,6 @@ class _squadInventoryState extends State<squadInventory> {
               width: 400,
               child: ListView(
                 children: [
-                  Text("Assigned Firearm"),
                   TextFormField(
                     controller: soldier,
                     obscureText: false,
@@ -154,6 +159,7 @@ class _squadInventoryState extends State<squadInventory> {
                       hintStyle: TextStyle(color: Colors.white),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextFormField(
                     controller: name,
                     obscureText: false,
@@ -164,6 +170,7 @@ class _squadInventoryState extends State<squadInventory> {
                       hintStyle: TextStyle(color: Colors.white),
                     ),
                   ),
+                  SizedBox(height: 8,),
                   TextFormField(
                     controller: sNum,
                     obscureText: false,
@@ -266,7 +273,19 @@ class _squadInventoryState extends State<squadInventory> {
                 width: 400,
                 child: ListView(
                   children: [
-                    Text("Assigned Firearm"),
+                    TextFormField(
+                      controller: soldier,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        hintText: "Soldier Assigned",
+                        filled: true,
+                        fillColor: Colors.grey,
+                        hintStyle: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
                     TextFormField(
                       controller: name,
                       obscureText: false,
@@ -277,15 +296,8 @@ class _squadInventoryState extends State<squadInventory> {
                         hintStyle: TextStyle(color: Colors.white),
                       ),
                     ),
-                    TextFormField(
-                      controller: soldier,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Soldier Assigned",
-                        filled: true,
-                        fillColor: Colors.grey,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
+                    SizedBox(
+                      height: 8,
                     ),
                     TextFormField(
                       controller: sNum,
@@ -352,7 +364,7 @@ class _squadInventoryState extends State<squadInventory> {
                     if (name.text != '' && caliber.text != '' && soldier.text != '' && sNum.text != '') {
                       final StorageService _storageService = StorageService();
                       String? _User = await _storageService.User();
-                      addSquadWeapon(name.text, dropDownValue, caliber.text, soldier.text, sNum.text, _User!);
+                      addSquadWeapon(name.text, dropDownValue, caliber.text, sNum.text, soldier.text, _User!);
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -438,3 +450,9 @@ class _squadInventoryState extends State<squadInventory> {
     box.add(weapon);
   }
 }
+// class NavigationDrawer extends StatelessWidget{
+//   const NavigationDrawer({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) => Drawer();
+// }
