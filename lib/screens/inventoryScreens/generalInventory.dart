@@ -12,6 +12,7 @@ import 'package:zboryar_application/constants/constants.dart';
 import 'package:zboryar_application/database/hive/model/invWeapon.dart';
 import 'package:grouped_list/grouped_list.dart';
 
+import '../../components/components.dart';
 import '../../database/hive/model/boxes.dart';
 import '../../database/storage.dart';
 
@@ -277,22 +278,37 @@ class _generalInventoryState extends State<generalInventory> {
               ),
             ),
             itemBuilder: (c, weapons) {
-              return GFListTile(
-                padding: EdgeInsets.all(15),
-                margin: EdgeInsets.all(6),
-                color: Colors.grey[400],
-                titleText: '${weapons.Name} - Quantity: ${weapons.Quantity}',
-                subTitleText: '${weapons.Type}',
-                description: Text('${weapons.Caliber}'),
-                icon: SvgPicture.asset(
-                  "assets/icon/${weapons.Type}.svg",
-                  width: 35,
-                  height: 32,
+              return Dismissible(
+                background: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Colors.red,
+                  ),
                 ),
-                onTap: () async {
-                  await openDialog(weapons);
-                  setState(() {});
+                confirmDismiss: (direction) => deleteDialog(context, direction),
+                key: Key(weapons.key.toString()),
+                onDismissed: (direction) {
+                  weapons.delete();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      showSnackBar(context, '${weapons.Name} dismissed'));
                 },
+                child: GFListTile(
+                  padding: EdgeInsets.all(15),
+                  margin: EdgeInsets.all(6),
+                  color: Colors.grey[400],
+                  titleText: '${weapons.Name} - Quantity: ${weapons.Quantity}',
+                  subTitleText: '${weapons.Type}',
+                  description: Text('${weapons.Caliber}'),
+                  icon: SvgPicture.asset(
+                    "assets/icon/${weapons.Type}.svg",
+                    width: 35,
+                    height: 32,
+                  ),
+                  onTap: () async {
+                    await openDialog(weapons);
+                    setState(() {});
+                  },
+                ),
               );
             },
         ),

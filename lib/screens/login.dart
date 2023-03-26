@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-          //SING UP
+          //SIGN UP
           AnimatedPositioned(
             duration: defaultDuration,
             height: _size.height,
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
             right: _regShown ? -_size.width*.06 : _size.width*0.06,
             child:  Column(
                   children: [
-                    Image.asset('assets/icon/ammo.png'),
+                    Image.asset('assets/icon/ammo.png', height: 225, width: 225,),
                   ],
                 ),
           ),

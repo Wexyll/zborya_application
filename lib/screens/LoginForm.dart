@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zboryar_application/components/components.dart';
 import 'package:zboryar_application/constants/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zboryar_application/screens/navigationPage.dart';
@@ -23,13 +24,19 @@ class _LoginFormState extends State<LoginForm> {
   int failure = 3;
 
   final StorageService _storageService = StorageService();
-
   final TextEditingController username = TextEditingController();
-
   final TextEditingController password = TextEditingController();
+  final _FormKey = GlobalKey<FormState>();
 
   String? _user;
   String? _pass;
+
+  @override
+  void dispose() {
+    super.dispose();
+    username.dispose();
+    password.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,41 +60,18 @@ class _LoginFormState extends State<LoginForm> {
               height: 26,
             ),
             Form(
+              key: _FormKey,
               child: Column(
                 children: [
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: TextFormField(
-                      controller: username,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Username",
-                        filled: true,
-                        fillColor: Colors.white38,
-                        hintStyle: TextStyle(color: Colors.white),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: defaultPadding * 1.2,
-                            horizontal: defaultPadding),
-                      ),
-                    ),
+                    child: LoginTextField(textController: username, hintText: "Username")
                   ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: TextFormField(
-                      controller: password,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        filled: true,
-                        fillColor: Colors.white38,
-                        hintStyle: TextStyle(color: Colors.white),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: defaultPadding * 1.2,
-                            horizontal: defaultPadding),
-                      ),
-                    ),
+                    child: LoginTextField(textController: password, hintText: "Password", isPass: true)
                   ),
                 ],
               ),
@@ -101,15 +85,14 @@ class _LoginFormState extends State<LoginForm> {
                   _pass = await _storageService.Pass();
                   if (_user == null) {
                     failure = failure -1;
-                    var snackbar =
-                        SnackBar(content: Text("Username Does Not Exist"));
+                    var snackbar = SnackBar(content: Text("No Users Created"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if (_user != username.text.toLowerCase()) {
+                  } else if (_user != username.text.toLowerCase().trim()) {
                     failure = failure -1;
                     var snackbar =
                         SnackBar(content: Text("Username is Incorrect"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if (_pass != password.text) {
+                  } else if (_pass != password.text.trim()) {
                     failure = failure -1;
                     var snackbar =
                         SnackBar(content: Text("Password is Incorrect"));
@@ -125,50 +108,12 @@ class _LoginFormState extends State<LoginForm> {
                     );
                   }
                   if(failure == 1){
-                    AnimatedSnackBar(
-                      mobileSnackBarPosition: MobileSnackBarPosition.top,
-                      duration: Duration(milliseconds: 2000),
-                      snackBarStrategy: RemoveSnackBarStrategy(),
-                      builder: ((context) {
-                        return Container(
-                          height: 40,
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(20)),
-                            color: bg_login,
-                          ),
-                          child: Text('One Try Remaining', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white),),
-                        );
-                      }),
-                    ).show(context);
+                    showSnackBar(context, "One Attempt Remaining");
                   }
                   if(failure <= 0){
                     final StorageService _storageService = StorageService();
                     _storageService.deleteAllSecureData();
-                    AnimatedSnackBar(
-                      mobileSnackBarPosition: MobileSnackBarPosition.top,
-                      duration: Duration(milliseconds: 2000),
-                      snackBarStrategy: RemoveSnackBarStrategy(),
-                      builder: ((context) {
-                        return Container(
-                          height: 40,
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(20)),
-                            color: bg_login,
-                          ),
-                          child: Text('Deleting Data', style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.white),),
-                        );
-                      }),
-                    ).show(context);
+                    showSnackBar(context, "FAIL: DATA DELETED");
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -191,25 +136,9 @@ class _LoginFormState extends State<LoginForm> {
                 final StorageService _storageService = StorageService();
                 String? _Question1 = await _storageService.Question1();
                 String? _Question2 = await _storageService.Question2();
-                print(_Question1);
 
                 if (_Question1 == null) {
-                  AnimatedSnackBar(
-                    mobileSnackBarPosition: MobileSnackBarPosition.top,
-                    duration: Duration(milliseconds: 2000),
-                    snackBarStrategy: RemoveSnackBarStrategy(),
-                    builder: ((context) {
-                      return Container(
-                        height: 40,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: bg_login,
-                        ),
-                        child: Text('No Account Created', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
-                      );
-                    }),
-                  ).show(context);
+                  showSnackBar(context, "No Account Exist");
                 } else {
                   Navigator.push(
                     context,
