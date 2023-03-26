@@ -38,6 +38,7 @@ class _generalInventoryState extends State<generalInventory> {
       appBar: AppBar(
         title: Text("General Inventory"),
         backgroundColor: bg_login,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 75),

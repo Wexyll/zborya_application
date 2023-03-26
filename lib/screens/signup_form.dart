@@ -138,8 +138,11 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   }else if(password.text.length < 6){
                     var snackbar = SnackBar(content: Text("Password is Too Short! (Minimum 6 Characters!)"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                  }else if(pin.text.length != 6){
+                    var snackbar = SnackBar(content: Text("PIN must be 6 Numbers"));
+                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
                   }else {
-                    final encryptData eUsername = encryptData("Username", username.text);
+                    final encryptData eUsername = encryptData("Username", username.text.toLowerCase());
                     final encryptData ePassword = encryptData("Password", password.text);
                     final encryptData ePin = encryptData("Pin", pin.text);
                     _storageService.writeSecureData(eUsername);

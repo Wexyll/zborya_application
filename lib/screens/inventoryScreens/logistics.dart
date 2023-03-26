@@ -26,6 +26,7 @@ class _logisticsPageState extends State<logisticsPage> {
       appBar: AppBar(
         title: Text("Logistical Page"),
         backgroundColor: bg_login,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 75),

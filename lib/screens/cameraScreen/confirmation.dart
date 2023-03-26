@@ -81,7 +81,7 @@ class _confirmWeaponsState extends State<confirmWeapons> {
           return Column(
             children: [
               AlertDialog(
-                title: Text("Change ${my_list[index].name} Quantity"),
+                title: Text("Change ${my_list[index].nameController} Quantity"),
                 content: NumberPicker(
                   value: my_list[index].quantity,
                   minValue: 0,

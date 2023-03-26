@@ -104,7 +104,7 @@ class _LoginFormState extends State<LoginForm> {
                     var snackbar =
                         SnackBar(content: Text("Username Does Not Exist"));
                     ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if (_user != username.text) {
+                  } else if (_user != username.text.toLowerCase()) {
                     failure = failure -1;
                     var snackbar =
                         SnackBar(content: Text("Username is Incorrect"));

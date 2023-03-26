@@ -88,7 +88,7 @@ class NavigationDrawer extends StatelessWidget{
 
 
   Widget buildMenuItems(BuildContext context) => Container(
-    padding: const EdgeInsets.all(24),
+    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 15),
     child: Wrap(
       runSpacing: 12,
       children: [ListTile(

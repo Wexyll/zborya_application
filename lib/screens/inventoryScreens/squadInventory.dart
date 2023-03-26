@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +12,7 @@ import 'package:zboryar_application/constants/constants.dart';
 import 'package:zboryar_application/database/hive/model/invWeapon.dart';
 import 'package:grouped_list/grouped_list.dart';
 
+import '../../components/components.dart';
 import '../../database/hive/model/boxes.dart';
 import '../../database/hive/model/squadWeapon.dart';
 import '../../database/storage.dart';
@@ -21,37 +25,54 @@ class squadInventory extends StatefulWidget {
 }
 
 class _squadInventoryState extends State<squadInventory> {
-
+  List categoriesList = [];
   String dropDownValue = 'Sniper';
-  int quant = 0;
-  bool isChecked = false;
-  final TextEditingController name = TextEditingController();
-  final TextEditingController type = TextEditingController();
-  final TextEditingController sNum = TextEditingController();
-  final TextEditingController caliber = TextEditingController();
-  final TextEditingController soldier = TextEditingController();
+  bool isWeaponFromInventory = false;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController sNumController = TextEditingController();
+  final TextEditingController caliberController = TextEditingController();
+  final TextEditingController soldierController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    getCategories();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameController.dispose();
+    typeController.dispose();
+    sNumController.dispose();
+    caliberController.dispose();
+    soldierController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Squad Inventory"),
         backgroundColor: bg_login,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 75),
-        child: ValueListenableBuilder<Box<squadWeapon>>(
+        child: ValueListenableBuilder<Box>(
           valueListenable: Boxes.getSquadWeapons().listenable(),
           builder: (context, box, _) {
-            final weapons = box.values.toList().cast<squadWeapon>();
-            return buildContent(weapons);
+            final weaponsList = box.values.toList().cast<squadWeapon>();
+            return buildSquadInventoryList(weaponsList);
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await addWeaponDialog();
-          setState(() {});
         },
         child: Icon(
           Icons.add,
@@ -65,8 +86,14 @@ class _squadInventoryState extends State<squadInventory> {
     );
   }
 
-  Widget buildContent(List<squadWeapon> weapons) {
-    if (weapons.isEmpty) {
+  /*
+  *
+  * BUILD CONTENT
+  *
+   */
+
+  Widget buildSquadInventoryList(List<squadWeapon> weaponsList) {
+    if (weaponsList.isEmpty) {
       return Center(
         child: Text(
           'No Weapons Added Yet',
@@ -78,8 +105,8 @@ class _squadInventoryState extends State<squadInventory> {
         padding: const EdgeInsets.all(8.0),
         child: GroupedListView(
           shrinkWrap: true,
-          elements: weapons,
-          groupBy: (weapons) => weapons.Type,
+          elements: weaponsList,
+          groupBy: (singleWeapon) => singleWeapon.Type,
           order: GroupedListOrder.ASC,
           useStickyGroupSeparators: true,
           groupSeparatorBuilder: (String value) => Padding(
@@ -90,36 +117,35 @@ class _squadInventoryState extends State<squadInventory> {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          itemBuilder: (c, weapons) {
+          itemBuilder: (c, singleWeapon) {
             return Dismissible(
               background: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.red,
-              ),),
-              key: Key(weapons.key.toString()),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  color: Colors.red,
+                ),
+              ),
+              confirmDismiss: (direction) => deleteDialog(direction),
+              key: Key(singleWeapon.key.toString()),
               onDismissed: (direction) {
-                setState(() {
-                  weapons.delete();
-                });
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('${weapons.Name} dismissed')));
+                singleWeapon.delete();
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${singleWeapon.Name} dismissed')));
               },
               child: GFListTile(
                 padding: EdgeInsets.all(15),
                 margin: EdgeInsets.all(6),
                 color: Colors.grey[400],
-                titleText: '${weapons.Name} - ID: ${weapons.Soldier}',
-                subTitleText: '${weapons.Caliber}',
-                description: Text('${weapons.Serial_Number}'),
+                titleText: '${singleWeapon.Name} - ID: ${singleWeapon.Soldier}',
+                subTitleText: '${singleWeapon.Caliber}',
+                description: Text('${singleWeapon.Serial_Number}'),
                 icon: SvgPicture.asset(
-                  "assets/icon/${weapons.Type}.svg",
+                  "assets/icon/${singleWeapon.Type}.svg",
                   width: 35,
                   height: 32,
                 ),
                 onTap: () async {
-                  await openDialog(weapons);
-                  setState(() {});
+                  await openEditWeaponDetailsDialog(singleWeapon);
                 },
               ),
             );
@@ -136,130 +162,100 @@ class _squadInventoryState extends State<squadInventory> {
   *
   *
    */
-  Future openDialog(var weapons) => showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          String select = '';
-          return AlertDialog(
-            title: Text("Edit Weapon"),
-            content: Container(
-              height: 350,
-              width: 400,
-              child: ListView(
-                children: [
-                  TextFormField(
-                    controller: soldier,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      hintText: "Soldier Assigned",
-                      filled: true,
-                      fillColor: Colors.grey,
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 8,),
-                  TextFormField(
-                    controller: name,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      hintText: "Weapon Name",
-                      filled: true,
-                      fillColor: Colors.grey,
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 8,),
-                  TextFormField(
-                    controller: sNum,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      hintText: "Weapon Serial Number",
-                      filled: true,
-                      fillColor: Colors.grey,
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  DropdownButton<String>(
-                    items: const [
-                      DropdownMenuItem<String>(
-                          value: "Sniper", child: Text("Sniper")),
-                      DropdownMenuItem<String>(
-                          value: "Rifle", child: Text("Rifle")),
-                      DropdownMenuItem<String>(
-                          value: "Pistol", child: Text("Pistol")),
-                      DropdownMenuItem<String>(
-                          value: "Shotgun", child: Text("Shotgun")),
-                      DropdownMenuItem<String>(
-                          value: "Sub_Machinegun",
-                          child: Text("Sub_Machinegun")),
-                      DropdownMenuItem<String>(
-                          value: "Machinegun", child: Text("Machinegun")),
-                      DropdownMenuItem<String>(
-                          value: "Explosive", child: Text("Explosive")),
-                      DropdownMenuItem<String>(
-                          value: "Other", child: Text("Other")),
+  Future openEditWeaponDetailsDialog(var weapons) => showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text("Edit Weapon"),
+                content: Container(
+                  height: 350,
+                  width: 400,
+                  child: ListView(
+                    children: [
+                      buildTextField(
+                          textController: soldierController,
+                          hintText: "Soldier Assigned"),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      buildTextField(
+                          textController: nameController,
+                          hintText: "Weapon Name"),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      buildTextField(
+                          textController: sNumController,
+                          hintText: "Weapon Serial Number"),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      DropdownButton<String>(
+                        items: [
+                          for(String category in categoriesList) DropdownMenuItem<String>(value: category, child: Text(category)),
+                        ],
+                        value: dropDownValue,
+                        onChanged: (value) => setState(() {
+                          dropDownValue = value!;
+                          typeController.text = value;
+                        }),
+                      ),
+                      SizedBox(height: 8),
+                      buildTextField(
+                          textController: caliberController,
+                          hintText: "Caliber"),
                     ],
-                    value: dropDownValue,
-                    onChanged: (value) => setState(() {
-                      dropDownValue = value!;
-                    }),
                   ),
-                  SizedBox(
-                    height: 8,
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      if (weapons.Name != nameController.text &&
+                          nameController.text != '') {
+                        weapons.Name = nameController.text;
+                        nameController.clear();
+                      }
+                      if (weapons.Type != typeController.text &&
+                          typeController.text != '') {
+                        weapons.Type = typeController.text;
+                        typeController.clear();
+                      }
+                      if (weapons.Caliber != caliberController.text &&
+                          caliberController.text != '') {
+                        weapons.Caliber = caliberController.text;
+                        caliberController.clear();
+                      }
+                      if (weapons.Soldier != soldierController.text &&
+                          soldierController.text != '') {
+                        weapons.Soldier = soldierController.text;
+                        soldierController.clear();
+                      }
+                      if (weapons.Serial_Number != sNumController.text &&
+                          sNumController.text != '') {
+                        weapons.Serial_Number = sNumController.text;
+                      }
+                      weapons.save();
+                      isWeaponFromInventory = false;
+                      Navigator.pop(context);
+                    },
+                    child: Text("Okay"),
                   ),
-                  TextFormField(
-                    controller: caliber,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      hintText: "Caliber",
-                      filled: true,
-                      fillColor: Colors.grey,
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
+                  TextButton(
+                    onPressed: () {
+                      resetModalFields();
+                      return Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
                   ),
                 ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                    if (weapons.Name != name.text && name.text != '') {
-                      weapons.Name = name.text;
-                      name.clear();
-                    }
-                    if (weapons.Type != type.text && type.text != '') {
-                      weapons.Type = type.text;
-                      type.clear();
-                    }
-                    if (weapons.Caliber != caliber.text &&
-                        caliber.text != '') {
-                      weapons.Caliber = caliber.text;
-                      caliber.clear();
-                    }
-                    if(weapons.Soldier != soldier.text && soldier.text != ''){
-                      weapons.Soldier = soldier.text;
-                      soldier.clear();
-                    }
-                    if(weapons.Serial_Number != sNum.text && sNum.text != ''){
-                      weapons.Serial_Number = sNum.text;
-                    }
-                    weapons.save();
-                    isChecked = false;
-                    Navigator.pop(context);
-                },
-                child: Text("Okay"),
-              ),
-            ],
+              );
+            },
           );
         },
       );
-    },
-  );
 
   addWeaponDialog() => showDialog(
       context: context,
@@ -274,7 +270,7 @@ class _squadInventoryState extends State<squadInventory> {
                 child: ListView(
                   children: [
                     TextFormField(
-                      controller: soldier,
+                      controller: soldierController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Soldier Assigned",
@@ -287,7 +283,7 @@ class _squadInventoryState extends State<squadInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: name,
+                      controller: nameController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Weapon Name",
@@ -300,7 +296,7 @@ class _squadInventoryState extends State<squadInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: sNum,
+                      controller: sNumController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Weapon Serial Number",
@@ -341,7 +337,7 @@ class _squadInventoryState extends State<squadInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: caliber,
+                      controller: caliberController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Caliber",
@@ -353,18 +349,29 @@ class _squadInventoryState extends State<squadInventory> {
                     CheckboxListTile(
                         controlAffinity: ListTileControlAffinity.leading,
                         title: Text("Weapon From Inventory?"),
-                        value: isChecked,
-                        onChanged: (isChecked) => setState(() {this.isChecked = isChecked!;}))
+                        value: isWeaponFromInventory,
+                        onChanged: (isChecked) => setState(() {
+                              this.isWeaponFromInventory = isChecked!;
+                            }))
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   onPressed: () async {
-                    if (name.text != '' && caliber.text != '' && soldier.text != '' && sNum.text != '') {
+                    if (nameController.text != '' &&
+                        caliberController.text != '' &&
+                        soldierController.text != '' &&
+                        sNumController.text != '') {
                       final StorageService _storageService = StorageService();
                       String? _User = await _storageService.User();
-                      addSquadWeapon(name.text, dropDownValue, caliber.text, sNum.text, soldier.text, _User!);
+                      addSquadWeapon(
+                          nameController.text,
+                          dropDownValue,
+                          caliberController.text,
+                          sNumController.text,
+                          soldierController.text,
+                          _User!);
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -374,41 +381,49 @@ class _squadInventoryState extends State<squadInventory> {
                             height: 40,
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               color: bg_login,
                             ),
-                            child: Text('Weapon Added', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
+                            child: Text(
+                              'Weapon Added',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
                           );
                         }),
                       ).show(context);
-                      if(isChecked == true) {
+                      if (isWeaponFromInventory == true) {
                         final box = Boxes.getWeapons();
                         final wpn = box.values.toList().cast<InventoryWeapon>();
-                        for(int i = 0; i <= wpn.length-1; i++){
-                          if(wpn[i].Name == name.text){
-                            if(wpn[i].Quantity > 1){
-                              wpn[i].Quantity = wpn[i].Quantity-1;
+                        for (int i = 0; i <= wpn.length - 1; i++) {
+                          if (wpn[i].Name == nameController.text) {
+                            if (wpn[i].Quantity > 1) {
+                              wpn[i].Quantity = wpn[i].Quantity - 1;
                               wpn[i].save();
                             } else {
                               wpn[i].delete();
                             }
                           }
                         }
-                      };
+                      }
+                      ;
                       dropDownValue = 'Sniper';
-                      caliber.clear();
-                      soldier.clear();
-                      sNum.clear();
-                      name.clear();
-                      isChecked = false;
+                      caliberController.clear();
+                      soldierController.clear();
+                      sNumController.clear();
+                      nameController.clear();
+                      isWeaponFromInventory = false;
                       Navigator.pop(context);
-                    } else{
+                    } else {
                       dropDownValue = 'Sniper';
-                      caliber.clear();
-                      soldier.clear();
-                      sNum.clear();
-                      name.clear();
-                      isChecked = false;
+                      caliberController.clear();
+                      soldierController.clear();
+                      sNumController.clear();
+                      nameController.clear();
+                      isWeaponFromInventory = false;
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -418,10 +433,17 @@ class _squadInventoryState extends State<squadInventory> {
                             height: 40,
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               color: bg_login,
                             ),
-                            child: Text('No Weapons Added', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
+                            child: Text(
+                              'No Weapons Added',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
                           );
                         }),
                       ).show(context);
@@ -449,10 +471,64 @@ class _squadInventoryState extends State<squadInventory> {
     final box = Boxes.getSquadWeapons();
     box.add(weapon);
   }
+
+  Future<bool?> deleteDialog(DismissDirection direction) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Delete Weapon?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text("Okay"),
+              ),
+              TextButton(
+                onPressed: () {
+                  return Navigator.of(context).pop(false);
+                },
+                child: Text("Cancel"),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future getCategories() async {
+    final String response = await rootBundle.loadString(
+        'assets/json/categories.json');
+    final data = await json.decode(response);
+    categoriesList = data.toList();
+  }
+
+  resetModalFields() {
+    typeController.clear();
+    soldierController.clear();
+    nameController.clear();
+    caliberController.clear();
+    dropDownValue = 'Sniper';
+  }
 }
-// class NavigationDrawer extends StatelessWidget{
-//   const NavigationDrawer({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) => Drawer();
-// }
+
+
+/*
+DropdownMenuItem<String>(
+                              value: "Sniper", child: Text("Sniper")),
+                          DropdownMenuItem<String>(
+                              value: "Rifle", child: Text("Rifle")),
+                          DropdownMenuItem<String>(
+                              value: "Pistol", child: Text("Pistol")),
+                          DropdownMenuItem<String>(
+                              value: "Shotgun", child: Text("Shotgun")),
+                          DropdownMenuItem<String>(
+                              value: "Sub_Machinegun",
+                              child: Text("Sub_Machinegun")),
+                          DropdownMenuItem<String>(
+                              value: "Machinegun", child: Text("Machinegun")),
+                          DropdownMenuItem<String>(
+                              value: "Explosive", child: Text("Explosive")),
+                          DropdownMenuItem<String>(
+                              value: "Other", child: Text("Other")),
+ */
