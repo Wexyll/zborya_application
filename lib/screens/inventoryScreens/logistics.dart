@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -91,6 +92,7 @@ class _logisticsPageState extends State<logisticsPage> {
     }
   }
   Future openDialog(var weapons) => showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (context) {
       return StatefulBuilder(
@@ -106,8 +108,12 @@ class _logisticsPageState extends State<logisticsPage> {
                   TextFormField(
                     controller: rounds,
                     obscureText: false,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
                     decoration: InputDecoration(
-                      hintText: "${weapons.RoundCount}",
+                      hintText: "Round Count : ${weapons.RoundCount}",
                       filled: true,
                       fillColor: Colors.grey,
                       hintStyle: TextStyle(color: Colors.white),
@@ -119,8 +125,12 @@ class _logisticsPageState extends State<logisticsPage> {
                   TextFormField(
                     controller: mags,
                     obscureText: false,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
                     decoration: InputDecoration(
-                      hintText: "${weapons.MagCount}",
+                      hintText: "Mag Count : ${weapons.MagCount}",
                       filled: true,
                       fillColor: Colors.grey,
                       hintStyle: TextStyle(color: Colors.white),

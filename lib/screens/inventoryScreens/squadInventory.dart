@@ -253,6 +253,7 @@ class _squadInventoryState extends State<squadInventory> {
   );
 
   addWeaponDialog() => showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -398,111 +399,3 @@ class _squadInventoryState extends State<squadInventory> {
     username = (await _storageService.User())!;
   }
 }
-
-
-/*
-DropdownMenuItem<String>(
-                              value: "Sniper", child: Text("Sniper")),
-                          DropdownMenuItem<String>(
-                              value: "Rifle", child: Text("Rifle")),
-                          DropdownMenuItem<String>(
-                              value: "Pistol", child: Text("Pistol")),
-                          DropdownMenuItem<String>(
-                              value: "Shotgun", child: Text("Shotgun")),
-                          DropdownMenuItem<String>(
-                              value: "Sub_Machinegun",
-                              child: Text("Sub_Machinegun")),
-                          DropdownMenuItem<String>(
-                              value: "Machinegun", child: Text("Machinegun")),
-                          DropdownMenuItem<String>(
-                              value: "Explosive", child: Text("Explosive")),
-                          DropdownMenuItem<String>(
-                              value: "Other", child: Text("Other")),
- */
-/*
-openEditWeaponDetailsDialog(var weapon) => showDialog(
-  barrierDismissible: false,
-  context: context,
-  builder: (context) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        soldierController.text = weapon.Soldier;
-        nameController.text = weapon.Name;
-        sNumController.text = weapon.Serial_Number;
-        typeController.text = weapon.Type;
-        caliberController.text = weapon.Caliber;
-        return AlertDialog(
-          title: Text("Edit Weapon"),
-          content: Container(
-            height: 350,
-            width: 400,
-            child: Form(
-              key: _editingFormKey,
-              child: ListView(
-                children: [
-                  buildTextField(
-                      textController: soldierController,
-                      hintText: "Soldier Assigned"),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  buildTextField(
-                      textController: nameController,
-                      hintText: "Weapon Name"),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  buildTextField(
-                      textController: sNumController,
-                      hintText: "Weapon Serial Number"),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  DropdownButton<String>(
-                    items: [
-                      for(String category in categoriesList) DropdownMenuItem<String>(value: category, child: Text(category)),
-                    ],
-                    value: dropDownValue,
-                    onChanged: (value) => setState(() {
-                      dropDownValue = value!;
-                      typeController.text = value;
-                    }),
-                  ),
-                  SizedBox(height: 8),
-                  buildTextField(
-                      textController: caliberController,
-                      hintText: "Caliber"),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                if(_editingFormKey.currentState!.validate()) {
-                  _editingFormKey.currentState!.save();
-                  weapon.Name = nameController.text;
-                  weapon.Soldier = soldierController.text;
-                  weapon.Type = typeController.text;
-                  weapon.Serial_Number = sNumController.text;
-                  weapon.Caliber = caliberController.text;
-                  weapon.save();
-                  resetModalFields();
-                  Navigator.pop(context);
-                }
-              },
-              child: Text("Okay"),
-            ),
-            TextButton(
-              onPressed: () {
-                resetModalFields();
-                return Navigator.pop(context);
-              },
-              child: Text("Cancel"),
-            ),
-          ],
-        );
-      },
-    );
-  },
-);*/

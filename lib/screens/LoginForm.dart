@@ -8,6 +8,7 @@ import 'package:zboryar_application/constants/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zboryar_application/screens/navigationPage.dart';
 
+import '../database/hive/model/boxes.dart';
 import '../database/item.dart';
 import '../database/storage.dart';
 import 'cameraScreen/camera.dart';
@@ -84,37 +85,37 @@ class _LoginFormState extends State<LoginForm> {
                   _user = await _storageService.User();
                   _pass = await _storageService.Pass();
                   if (_user == null) {
-                    failure = failure -1;
-                    var snackbar = SnackBar(content: Text("No Users Created"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if (_user != username.text.toLowerCase().trim()) {
-                    failure = failure -1;
-                    var snackbar =
-                        SnackBar(content: Text("Username is Incorrect"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                  } else if (_pass != password.text.trim()) {
-                    failure = failure -1;
-                    var snackbar =
-                        SnackBar(content: Text("Password is Incorrect"));
-                    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    failure = failure - 1;
+                    showSnackBar(context, "No Users Created");
                   } else {
-                    failure = 3;
-                    final encryptData eIsLoggedIn =
-                        encryptData("isLoggedIn", "true");
-                    _storageService.writeSecureData(eIsLoggedIn);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => navigationPage()),
-                    );
-                  }
-                  if(failure == 1){
-                    showSnackBar(context, "One Attempt Remaining");
-                  }
-                  if(failure <= 0){
-                    final StorageService _storageService = StorageService();
-                    _storageService.deleteAllSecureData();
-                    showSnackBar(context, "FAIL: DATA DELETED");
-                  }
+                    if (_user != username.text.toLowerCase().trim()) {
+                      failure = failure - 1;
+                      showSnackBar(context, "Username is Incorrect");
+                    } else if (_pass != password.text.trim()) {
+                      failure = failure - 1;
+                      showSnackBar(context, "Password is Incorrect");
+                    } else {
+                      failure = 3;
+                      final encryptData eIsLoggedIn =
+                      encryptData("isLoggedIn", "true");
+                      _storageService.writeSecureData(eIsLoggedIn);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => navigationPage()),
+                      );
+                    }
+                    if (failure == 1) {
+                      showSnackBar(context, "One Attempt Remaining");
+                    }
+                    if (failure <= 0) {
+                      final StorageService _storageService = StorageService();
+                      _storageService.deleteAllSecureData();
+                      showSnackBar(context, "FAIL: DATA DELETED");
+                      Boxes.getWeapons().clear();
+                      Boxes.getSquadWeapons().clear();
+                    }
+                  };
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.white38,
@@ -156,10 +157,6 @@ class _LoginFormState extends State<LoginForm> {
                     fontSize: 15),
               ),
             ),
-
-            /*Spacer(
-              flex: 2,
-            )*/
           ],
         ),
       ),

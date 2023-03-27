@@ -26,12 +26,12 @@ class generalInventory extends StatefulWidget {
 class _generalInventoryState extends State<generalInventory> {
   String dropDownValue = 'Sniper';
   int quant = 0;
-  final TextEditingController rounds = TextEditingController();
-  final TextEditingController mags = TextEditingController();
-  final TextEditingController name = TextEditingController();
-  final TextEditingController quantity = TextEditingController();
-  final TextEditingController type = TextEditingController();
-  final TextEditingController caliber = TextEditingController();
+  final TextEditingController roundsController = TextEditingController();
+  final TextEditingController magsController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController quantityController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController caliberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,7 @@ class _generalInventoryState extends State<generalInventory> {
                       }),
                     ),
                     TextFormField(
-                      controller: name,
+                      controller: nameController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Weapon Name",
@@ -132,7 +132,7 @@ class _generalInventoryState extends State<generalInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: caliber,
+                      controller: caliberController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Caliber",
@@ -145,7 +145,7 @@ class _generalInventoryState extends State<generalInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: rounds,
+                      controller: roundsController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Round Count",
@@ -158,7 +158,7 @@ class _generalInventoryState extends State<generalInventory> {
                       height: 8,
                     ),
                     TextFormField(
-                      controller: mags,
+                      controller: magsController,
                       obscureText: false,
                       decoration: InputDecoration(
                         hintText: "Magazine Count",
@@ -173,18 +173,18 @@ class _generalInventoryState extends State<generalInventory> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () async {
-                    if (name.text != '' && quant != 0 && caliber.text != '') {
+                    if (nameController.text != '' && quant != 0 && caliberController.text != '') {
                       final StorageService _storageService = StorageService();
                       String? _User = await _storageService.User();
                       int roundC = 0;
                       int magC = 0;
-                      if (rounds.text != '') {
-                        roundC = int.parse(rounds.text);
+                      if (roundsController.text != '') {
+                        roundC = int.parse(roundsController.text);
                       }
-                      if(mags.text != '') {
-                        magC = int.parse(mags.text);
+                      if(magsController.text != '') {
+                        magC = int.parse(magsController.text);
                       }
-                      addWeapon(name.text, quant, dropDownValue, caliber.text, _User!, roundC, magC);
+                      addWeapon(nameController.text, quant, dropDownValue, caliberController.text, _User!, roundC, magC);
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -203,14 +203,14 @@ class _generalInventoryState extends State<generalInventory> {
                       ).show(context);
                       quant = 0;
                       dropDownValue = 'Sniper';
-                      caliber.clear();
-                      name.clear();
+                      caliberController.clear();
+                      nameController.clear();
                       Navigator.pop(context);
                     } else{
-                      name.clear();
+                      nameController.clear();
                       quant = 0;
                       dropDownValue = 'Sniper';
-                      caliber.clear();
+                      caliberController.clear();
                       AnimatedSnackBar(
                         mobileSnackBarPosition: MobileSnackBarPosition.top,
                         duration: Duration(milliseconds: 5),
@@ -231,6 +231,13 @@ class _generalInventoryState extends State<generalInventory> {
                     }
                   },
                   child: Text("Okay"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    resetModalFields();
+                    return Navigator.pop(context);
+                  },
+                  child: Text("Cancel"),
                 ),
               ],
             );
@@ -341,7 +348,7 @@ class _generalInventoryState extends State<generalInventory> {
                         }),
                       ),
                       TextFormField(
-                        controller: name,
+                        controller: nameController,
                         obscureText: false,
                         decoration: InputDecoration(
                           hintText: "${weapons.Name}",
@@ -382,7 +389,7 @@ class _generalInventoryState extends State<generalInventory> {
                         height: 8,
                       ),
                       TextFormField(
-                        controller: caliber,
+                        controller: caliberController,
                         obscureText: false,
                         decoration: InputDecoration(
                           hintText: "${weapons.Caliber}",
@@ -398,18 +405,18 @@ class _generalInventoryState extends State<generalInventory> {
                   TextButton(
                     onPressed: () {
                       if (weapons.Quantity != 0) {
-                        if (weapons.Name != name.text && name.text != '') {
-                          weapons.Name = name.text;
-                          name.clear();
+                        if (weapons.Name != nameController.text && nameController.text != '') {
+                          weapons.Name = nameController.text;
+                          nameController.clear();
                         }
-                        if (weapons.Type != type.text && type.text != '') {
-                          weapons.Type = type.text;
-                          type.clear();
+                        if (weapons.Type != typeController.text && typeController.text != '') {
+                          weapons.Type = typeController.text;
+                          typeController.clear();
                         }
-                        if (weapons.Caliber != caliber.text &&
-                            caliber.text != '') {
-                          weapons.Caliber = caliber.text;
-                          caliber.clear();
+                        if (weapons.Caliber != caliberController.text &&
+                            caliberController.text != '') {
+                          weapons.Caliber = caliberController.text;
+                          caliberController.clear();
                         }
                         weapons.save();
                         Navigator.pop(context);
@@ -420,39 +427,27 @@ class _generalInventoryState extends State<generalInventory> {
                     },
                     child: Text("Okay"),
                   ),
+                  TextButton(
+                    onPressed: () {
+                      resetModalFields();
+                      return Navigator.pop(context);
+                    },
+                    child: Text("Cancel"),
+                  ),
                 ],
               );
             },
           );
         },
       );
+
+  resetModalFields() {
+    typeController.clear();
+    nameController.clear();
+    caliberController.clear();
+    quantityController.clear();
+    magsController.clear();
+    roundsController.clear();
+    dropDownValue = 'Sniper';
+  }
 }
-
-/*
-return ListView.builder(
-        itemCount: weapons.length,
-        itemBuilder: (context, index) {
-
-          return GFListTile(
-            padding: EdgeInsets.all(15),
-            margin: EdgeInsets.all(6),
-            color: Colors.grey[400],
-            titleText: '${weapons[index].Name} - Quantity: ${weapons[index].Quantity}',
-            subTitleText: '${weapons[index].Type}',
-            description: Text('${weapons[index].Caliber}'),
-            icon: SvgPicture.asset(
-              "assets/icon/${weapons[index].Type}.svg",
-              width: 35,
-              height: 32,
-            ),
-            onTap: () async {
-              // await openDialog(index, my_list);
-              await openDialog(index, weapons);
-              setState(() {
-
-              });
-            },
-          );
-        },
-      );
- */

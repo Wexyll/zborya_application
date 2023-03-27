@@ -292,7 +292,8 @@ class _cameraPageState extends State<cameraPage> {
                         MaterialPageRoute(
                           builder: (context) => confirmWeapons(wpnList: wList,),
                         ));
-                    wList.clear();
+                     wMap.clear();
+                     wList.clear();
                   } else{
                     scanning = false;
                   }

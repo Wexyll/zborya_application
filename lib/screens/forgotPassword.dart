@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:zboryar_application/components/components.dart';
+import '../database/hive/model/boxes.dart';
 import '../database/item.dart';
 import '../database/storage.dart';
 import '../main.dart';
@@ -116,6 +117,8 @@ class _forgotPasswordState extends State<forgotPassword> {
                         if (failure <= 0) {
                           _storageService.deleteAllSecureData();
                           showSnackBar(context, "DATA DELETED");
+                          Boxes.getWeapons().clear();
+                          Boxes.getSquadWeapons().clear();
                           Navigator.pop(context);
                         } else {
                           showSnackBar(context, "Warning: Wrong Answers");
