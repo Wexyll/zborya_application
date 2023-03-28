@@ -75,7 +75,7 @@ class _logisticsPageState extends State<logisticsPage> {
               margin: EdgeInsets.all(6),
               color: Colors.grey[400],
               titleText: '${weapons.Name} - Q: ${weapons.Quantity}\nTotal Rounds: ${_totalA}',
-              description: Text('\nMags: ${weapons.MagCount}\nRounds Per Gun ${total}'),
+              description: Text('\nMags: ${weapons.MagCount}\nRounds Per Gun: ${total}\nAmmo Type: ${weapons.Caliber}'),
               icon: SvgPicture.asset(
                 "assets/icon/${weapons.Type}.svg",
                 width: 35,

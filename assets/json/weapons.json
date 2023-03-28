@@ -2,28 +2,28 @@
   "weapons": [{
     "Name": "SV98",
     "Type": "Sniper",
-    "Caliber": "7.62×54mmR",
+    "Caliber": "7.62x54mmR",
     "Round_Count": 10,
     "Mag_Count": 5
   },
     {
       "Name": "AK47",
       "Type": "Rifle",
-      "Caliber": "7.62mm",
+      "Caliber": "7.62x39mm",
       "Round_Count": 30,
       "Mag_Count": 5
     },
     {
       "Name": "M249",
-      "Type": "Machinegun",
-      "Caliber": "5.56×45mm NATO",
+      "Type": "MG",
+      "Caliber": "5.56x45mm NATO",
       "Round_Count": 200,
       "Mag_Count": 5
     },
     {
       "Name": "FN2000",
       "Type": "Rifle",
-      "Caliber": "5.56×45mm NATO",
+      "Caliber": "5.56x45mm NATO",
       "Round_Count": 30,
       "Mag_Count": 5
     }

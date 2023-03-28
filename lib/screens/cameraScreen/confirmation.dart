@@ -9,6 +9,7 @@ import 'package:zboryar_application/constants/constants.dart';
 import 'package:zboryar_application/screens/inventoryScreens/generalInventory.dart';
 import 'package:zboryar_application/screens/navigationPage.dart';
 
+import '../../components/components.dart';
 import '../../database/hive/model/boxes.dart';
 import '../../database/hive/model/invWeapon.dart';
 import '../../database/storage.dart';
@@ -25,7 +26,7 @@ class confirmWeapons extends StatefulWidget {
 class _confirmWeaponsState extends State<confirmWeapons> {
   @override
   Widget build(BuildContext context) {
-    var my_list = widget.wpnList;
+    var my_list = widget.wpnList.toList();
     print(my_list[0].quantity);
 
     return Scaffold(
@@ -40,35 +41,66 @@ class _confirmWeaponsState extends State<confirmWeapons> {
         ),
       ),
       body: ListView.builder(
-        itemCount: widget.wpnList.length,
+        itemCount: my_list.length,
         itemBuilder: (context, index) {
-          return GFListTile(
-            padding: EdgeInsets.all(15),
-            margin: EdgeInsets.all(6),
-            color: Colors.grey[400],
-            titleText:
-                '${widget.wpnList[index].name} - Quantity: ${my_list[index].quantity}',
-            subTitleText: '${widget.wpnList[index].type}',
-            description: Text('${widget.wpnList[index].caliber}'),
-            icon: SvgPicture.asset(
-              "assets/icon/${widget.wpnList[index].type}.svg",
-              width: 35,
-              height: 32,
+          return Dismissible(
+            background: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.red,
+              ),
             ),
-            onTap: () async {},
+            confirmDismiss: (direction) => deleteDialog(context, direction),
+            key: Key(my_list[index].name),
+            onDismissed: (direction) {
+              print(my_list);
+              print("===========");
+              my_list.removeAt(index);
+              print(my_list);
+              ScaffoldMessenger.of(context).showSnackBar(
+                  showSnackBar(context, '${my_list[index].name} dismissed'));
+            },
+            child: GFListTile(
+              padding: EdgeInsets.all(15),
+              margin: EdgeInsets.all(6),
+              color: Colors.grey[400],
+              titleText:
+                  '${my_list[index].name} - Quantity: ${my_list[index].quantity}',
+              subTitleText: '${my_list[index].type}',
+              description: Text('${my_list[index].caliber}'),
+              icon: SvgPicture.asset(
+                "assets/icon/${my_list[index].type}.svg",
+                width: 35,
+                height: 32,
+              ),
+              onTap: () async {},
+            ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final StorageService _storageService = StorageService();
-          String? _User = await _storageService.User();
-          for (int i = 0; i <= my_list.length - 1; i++) {
-            addWeapon(my_list[i].name, my_list[i].quantity, my_list[i].type,
-                my_list[i].caliber, _User!, my_list[i].roundC, my_list[i].magC);
+          if(!my_list.isEmpty) {
+            final StorageService _storageService = StorageService();
+            String? _User = await _storageService.User();
+            for (int i = 0; i <= my_list.length - 1; i++) {
+              addWeapon(
+                  my_list[i].name,
+                  my_list[i].quantity,
+                  my_list[i].type,
+                  my_list[i].caliber,
+                  _User!,
+                  my_list[i].roundC,
+                  my_list[i].magC);
+            }
+            my_list.clear();
+            Navigator.of(context).pop();
+            showSnackBar(context, "Weapons Added");
+          } else{
+            my_list.clear();
+            Navigator.of(context).pop();
+            showSnackBar(context, "No Weapons Added");
           }
-          my_list.clear();
-          Navigator.of(context).pop();
         },
         child: Icon(
           Icons.check_circle,

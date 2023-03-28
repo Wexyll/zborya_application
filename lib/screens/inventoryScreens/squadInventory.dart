@@ -25,6 +25,8 @@ class squadInventory extends StatefulWidget {
 }
 
 class _squadInventoryState extends State<squadInventory> {
+  String caliberDropDown = '9x19mm NATO';
+  List caliberList = [];
   List categoriesList = [];
   String? username;
   String dropDownValue = 'Sniper';
@@ -41,6 +43,7 @@ class _squadInventoryState extends State<squadInventory> {
     super.initState();
     getCategories();
     getUser();
+    getCalibers();
   }
 
   @override
@@ -185,7 +188,7 @@ class _squadInventoryState extends State<squadInventory> {
                   children: [
                     buildTextField(
                         textController: soldierController,
-                        hintText: "Soldier Assigned"),
+                        hintText: "${weapon.Soldier}"),
                     SizedBox(
                       height: 8,
                     ),
@@ -205,16 +208,23 @@ class _squadInventoryState extends State<squadInventory> {
                       items: [
                         for(String category in categoriesList) DropdownMenuItem<String>(value: category, child: Text(category)),
                       ],
-                      value: dropDownValue,
+                      value: weapon.Type,
                       onChanged: (value) => setState(() {
-                        dropDownValue = value!;
-                        typeController.text = value;
+                        weapon.Type = value!;
+                        typeController.text = value!;
                       }),
                     ),
                     SizedBox(height: 8),
-                    buildTextField(
-                        textController: caliberController,
-                        hintText: "Caliber"),
+                    DropdownButton<String>(
+                      items: [
+                        for(String caliber in caliberList) DropdownMenuItem<String>(value: caliber, child: Text(caliber)),
+                      ],
+                      value: weapon.Caliber,
+                      onChanged: (value) => setState(() {
+                        weapon.Caliber = value!;
+                        caliberController.text = value!;
+                      }),
+                    ),
                   ],
                 ),
               ),
@@ -290,13 +300,20 @@ class _squadInventoryState extends State<squadInventory> {
                         value: dropDownValue,
                         onChanged: (value) => setState(() {
                           dropDownValue = value!;
-                          typeController.text = value;
+                          typeController.text = value!;
                         }),
                       ),
                       SizedBox(height: 8),
-                      buildTextField(
-                          textController: caliberController,
-                          hintText: "Caliber"),
+                      DropdownButton<String>(
+                        items: [
+                          for(String caliber in caliberList) DropdownMenuItem<String>(value: caliber, child: Text(caliber)),
+                        ],
+                        value: caliberDropDown,
+                        onChanged: (value) => setState(() {
+                          caliberDropDown = value!;
+                          caliberController.text = value!;
+                        }),
+                      ),
                       CheckboxListTile(
                           controlAffinity: ListTileControlAffinity.leading,
                           title: Text("Weapon From Inventory?"),
@@ -395,5 +412,12 @@ class _squadInventoryState extends State<squadInventory> {
   Future<void> getUser() async {
     final StorageService _storageService = StorageService();
     username = (await _storageService.User())!;
+  }
+
+  Future getCalibers() async {
+    final String response = await rootBundle.loadString(
+        'assets/json/caliber.json');
+    final data = await json.decode(response);
+    caliberList = data.toList();
   }
 }

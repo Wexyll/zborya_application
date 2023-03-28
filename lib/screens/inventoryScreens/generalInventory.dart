@@ -24,7 +24,10 @@ class generalInventory extends StatefulWidget {
 }
 
 class _generalInventoryState extends State<generalInventory> {
+  List categoriesList = [];
+  List caliberList = [];
   String dropDownValue = 'Sniper';
+  String caliberDropDown = '9x19mm NATO';
   int quant = 0;
   final TextEditingController roundsController = TextEditingController();
   final TextEditingController magsController = TextEditingController();
@@ -32,6 +35,14 @@ class _generalInventoryState extends State<generalInventory> {
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
   final TextEditingController caliberController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCategories();
+    getCalibers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +79,7 @@ class _generalInventoryState extends State<generalInventory> {
   }
 
   addWeaponDialog() => showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -90,83 +102,41 @@ class _generalInventoryState extends State<generalInventory> {
                         quant = value;
                       }),
                     ),
-                    TextFormField(
-                      controller: nameController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Weapon Name",
-                        filled: true,
-                        fillColor: Colors.grey,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    buildTextField(textController: nameController, hintText: "Weapon Name"),
                     SizedBox(
                       height: 8,
                     ),
                     DropdownButton<String>(
-                      items: const [
-                        DropdownMenuItem<String>(
-                            value: "Sniper", child: Text("Sniper")),
-                        DropdownMenuItem<String>(
-                            value: "Rifle", child: Text("Rifle")),
-                        DropdownMenuItem<String>(
-                            value: "Pistol", child: Text("Pistol")),
-                        DropdownMenuItem<String>(
-                            value: "Shotgun", child: Text("Shotgun")),
-                        DropdownMenuItem<String>(
-                            value: "Sub_Machinegun",
-                            child: Text("Sub_Machinegun")),
-                        DropdownMenuItem<String>(
-                            value: "Machinegun", child: Text("Machinegun")),
-                        DropdownMenuItem<String>(
-                            value: "Explosive", child: Text("Explosive")),
-                        DropdownMenuItem<String>(
-                            value: "Other", child: Text("Other")),
+                      items: [
+                        for(String category in categoriesList) DropdownMenuItem<String>(value: category, child: Text(category)),
                       ],
                       value: dropDownValue,
                       onChanged: (value) => setState(() {
                         dropDownValue = value!;
+                        typeController.text = value;
                       }),
                     ),
                     SizedBox(
                       height: 8,
                     ),
-                    TextFormField(
-                      controller: caliberController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Caliber",
-                        filled: true,
-                        fillColor: Colors.grey,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
+                    DropdownButton<String>(
+                      items: [
+                        for(String caliber in caliberList) DropdownMenuItem<String>(value: caliber, child: Text(caliber)),
+                      ],
+                      value: caliberDropDown,
+                      onChanged: (value) => setState(() {
+                        caliberDropDown = value!;
+                        caliberController.text = value!;
+                      }),
                     ),
                     SizedBox(
                       height: 8,
                     ),
-                    TextFormField(
-                      controller: roundsController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Round Count",
-                        filled: true,
-                        fillColor: Colors.grey,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    buildTextField(textController: roundsController, hintText: "Round Count"),
                     SizedBox(
                       height: 8,
                     ),
-                    TextFormField(
-                      controller: magsController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        hintText: "Magazine Count",
-                        filled: true,
-                        fillColor: Colors.grey,
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    buildTextField(textController: magsController, hintText: "Magazine Count"),
                   ],
                 ),
               ),
@@ -185,48 +155,14 @@ class _generalInventoryState extends State<generalInventory> {
                         magC = int.parse(magsController.text);
                       }
                       addWeapon(nameController.text, quant, dropDownValue, caliberController.text, _User!, roundC, magC);
-                      AnimatedSnackBar(
-                        mobileSnackBarPosition: MobileSnackBarPosition.top,
-                        duration: Duration(milliseconds: 5),
-                        snackBarStrategy: RemoveSnackBarStrategy(),
-                        builder: ((context) {
-                          return Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
-                              color: bg_login,
-                            ),
-                            child: Text('Weapon Added', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
-                          );
-                        }),
-                      ).show(context);
+                      showSnackBar(context, "Weapon Added");
                       quant = 0;
-                      dropDownValue = 'Sniper';
-                      caliberController.clear();
-                      nameController.clear();
+                      resetModalFields();
                       Navigator.pop(context);
                     } else{
-                      nameController.clear();
                       quant = 0;
-                      dropDownValue = 'Sniper';
-                      caliberController.clear();
-                      AnimatedSnackBar(
-                        mobileSnackBarPosition: MobileSnackBarPosition.top,
-                        duration: Duration(milliseconds: 5),
-                        snackBarStrategy: RemoveSnackBarStrategy(),
-                        builder: ((context) {
-                          return Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
-                              color: bg_login,
-                            ),
-                            child: Text('No Weapons Added', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
-                          );
-                        }),
-                      ).show(context);
+                      resetModalFields();
+                      showSnackBar(context, "No Weapons Added");
                       Navigator.pop(context);
                     }
                   },
@@ -244,6 +180,9 @@ class _generalInventoryState extends State<generalInventory> {
           },
         );
       });
+
+
+
   addWeapon(String name, num quantity, String type, String caliber,
       String user, int rounds, int mags) async {
     final weapon = InventoryWeapon()
@@ -324,6 +263,7 @@ class _generalInventoryState extends State<generalInventory> {
   }
 
   Future openDialog(var weapons) => showDialog(
+      barrierDismissible: false,
         context: context,
         builder: (context) {
           return StatefulBuilder(
@@ -347,38 +287,13 @@ class _generalInventoryState extends State<generalInventory> {
                           weapons.Quantity = value;
                         }),
                       ),
-                      TextFormField(
-                        controller: nameController,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          hintText: "${weapons.Name}",
-                          filled: true,
-                          fillColor: Colors.grey,
-                          hintStyle: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                      buildTextField(textController: nameController, hintText: "${weapons.Name}"),
                       SizedBox(
                         height: 8,
                       ),
                       DropdownButton<String>(
-                        items: const [
-                          DropdownMenuItem<String>(
-                              value: "Sniper", child: Text("Sniper")),
-                          DropdownMenuItem<String>(
-                              value: "Rifle", child: Text("Rifle")),
-                          DropdownMenuItem<String>(
-                              value: "Pistol", child: Text("Pistol")),
-                          DropdownMenuItem<String>(
-                              value: "Shotgun", child: Text("Shotgun")),
-                          DropdownMenuItem<String>(
-                              value: "Sub_Machinegun",
-                              child: Text("Sub_Machinegun")),
-                          DropdownMenuItem<String>(
-                              value: "Machinegun", child: Text("Machinegun")),
-                          DropdownMenuItem<String>(
-                              value: "Explosive", child: Text("Explosive")),
-                          DropdownMenuItem<String>(
-                              value: "Other", child: Text("Other")),
+                        items: [
+                          for(String category in categoriesList) DropdownMenuItem<String>(value: category, child: Text(category)),
                         ],
                         value: weapons.Type,
                         onChanged: (value) => setState(() {
@@ -388,15 +303,14 @@ class _generalInventoryState extends State<generalInventory> {
                       SizedBox(
                         height: 8,
                       ),
-                      TextFormField(
-                        controller: caliberController,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          hintText: "${weapons.Caliber}",
-                          filled: true,
-                          fillColor: Colors.grey,
-                          hintStyle: TextStyle(color: Colors.white),
-                        ),
+                      DropdownButton<String>(
+                        items: [
+                          for(String caliber in caliberList) DropdownMenuItem<String>(value: caliber, child: Text(caliber)),
+                        ],
+                        value: weapons.Caliber,
+                        onChanged: (value) => setState(() {
+                          weapons.Caliber = value!;
+                        }),
                       ),
                     ],
                   ),
@@ -409,19 +323,12 @@ class _generalInventoryState extends State<generalInventory> {
                           weapons.Name = nameController.text;
                           nameController.clear();
                         }
-                        if (weapons.Type != typeController.text && typeController.text != '') {
-                          weapons.Type = typeController.text;
-                          typeController.clear();
-                        }
-                        if (weapons.Caliber != caliberController.text &&
-                            caliberController.text != '') {
-                          weapons.Caliber = caliberController.text;
-                          caliberController.clear();
-                        }
                         weapons.save();
+                        resetModalFields();
                         Navigator.pop(context);
                       } else {
                         weapons.delete();
+                        resetModalFields();
                         Navigator.pop(context);
                       }
                     },
@@ -449,5 +356,18 @@ class _generalInventoryState extends State<generalInventory> {
     magsController.clear();
     roundsController.clear();
     dropDownValue = 'Sniper';
+  }
+
+  Future getCategories() async {
+    final String response = await rootBundle.loadString(
+        'assets/json/categories.json');
+    final data = await json.decode(response);
+    categoriesList = data.toList();
+  }
+  Future getCalibers() async {
+    final String response = await rootBundle.loadString(
+        'assets/json/caliber.json');
+    final data = await json.decode(response);
+    caliberList = data.toList();
   }
 }

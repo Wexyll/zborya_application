@@ -72,8 +72,8 @@ class _cameraPageState extends State<cameraPage> {
     objectDetector = ObjectDetector(options: options);
 
     controller = CameraController(cameras[0], ResolutionPreset.high);
-    //If camera is mounted then begin object detection using ML Kit
 
+    //If camera is mounted then begin object detection using ML Kit
     await controller.initialize().then((_) {
       if (!mounted) {
         return;
