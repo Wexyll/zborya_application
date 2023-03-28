@@ -55,8 +55,6 @@ class _squadInventoryState extends State<squadInventory> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Squad Inventory"),

@@ -210,9 +210,9 @@ class _cameraPageState extends State<cameraPage> {
     for (final object in objects) {
       weapon += '${object.labels.map((e) => e.text)}';
     }
-    weapon = weapon.replaceAll(RegExp(r'\(|\)'), '');
-    print(weapon);
 
+    //Removing brackets from string with regex
+    weapon = weapon.replaceAll(RegExp(r'\(|\)'), '');
 
     //Creating hashmap of weapons that have been scanned from object detector
     if(wMap.isEmpty && weapon != ''){ //If nothing is added yet
