@@ -114,28 +114,42 @@ class _cameraPageState extends State<cameraPage> {
 
   //Perform Object Detection on each frame and create a list of the objects found.
   doObjectDetectionOnFrame() async {
-    var frameImg = getInputImage();
-
-    List<DetectedObject> objects = await objectDetector.processImage(frameImg);
+    bool scanned = false;
     List<DetectedObject> empty = [];
-
-    for (final object in objects) {
-      var list = object.labels;
-      for (Label label in list) {
-        if (label.confidence >= 0.5) {
-           confidence = true;
-        } else {
-          confidence = false;
+    if(scanning == true) {
+      var frameImg = getInputImage();
+      List<DetectedObject> objects = await objectDetector.processImage(
+          frameImg);
+      for (final object in objects) {
+        var list = object.labels;
+        for (Label label in list) {
+          if (label.text == 'Non_Firearm') {
+            scanned = true;
+          } else {
+            scanned = false;
+          }
+          if (label.confidence >= 0.5) {
+            confidence = true;
+          } else {
+            confidence = false;
+          }
         }
       }
-    }
-
-    //If Confidence is greater than 50% then highlight, if not feed an empty array
-    if(confidence == true) {
-      setState(() {
-        _scanResults = objects;
-      });
-    }else {
+      //If Confidence is greater than 50% then highlight, if not feed an empty array
+      if(scanned == true){
+        setState(() {
+          _scanResults = empty;
+        });
+      } else if (confidence == true && scanned != true) {
+        setState(() {
+          _scanResults = objects;
+        });
+      } else {
+        setState(() {
+          _scanResults = empty;
+        });
+      }
+    } else{
       setState(() {
         _scanResults = empty;
       });
@@ -179,7 +193,7 @@ class _cameraPageState extends State<cameraPage> {
 
     final inputImage =
         InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
-
+    print(inputImage);
     return inputImage;
   }
 
@@ -215,11 +229,14 @@ class _cameraPageState extends State<cameraPage> {
     weapon = weapon.replaceAll(RegExp(r'\(|\)'), '');
 
     //Creating hashmap of weapons that have been scanned from object detector
-    if(wMap.isEmpty && weapon != ''){ //If nothing is added yet
-      wMap[weapon]=1;
-    } else if(wMap.containsKey(weapon)) { //If the weapon has already been scanned
-      wMap.update(weapon, (int) => wMap[weapon]+1);
-    } else  if(!wMap.containsKey(weapon) && weapon != ''){ //If it is a new weapon
+    if (wMap.isEmpty && weapon != '') {
+      //If nothing is added yet
+      wMap[weapon] = 1;
+    } else if (wMap.containsKey(weapon)) {
+      //If the weapon has already been scanned
+      wMap.update(weapon, (int) => wMap[weapon] + 1);
+    } else if (!wMap.containsKey(weapon) && weapon != '') {
+      //If it is a new weapon
       wMap[weapon] = 1;
     }
   }
@@ -272,16 +289,22 @@ class _cameraPageState extends State<cameraPage> {
                   scanning = true;
                 } else {
                   //If Scanning is finished and the weapons hashmap is not empty then transfer the list to a new listview page to confirm additions
-                  if(!wMap.isEmpty) {
+                  if (!wMap.isEmpty) {
                     scanning = false;
-                    final String response = await rootBundle.loadString(
-                        'assets/json/weapons.json');
+                    final String response =
+                        await rootBundle.loadString('assets/json/weapons.json');
                     final data = await json.decode(response);
 
                     //Adding an instance of an object to the weapons list of Weapon Objects
-                    for(int j = 0; j <= data["weapons"].length-1; j++) {
-                      if(wMap.containsKey(data["weapons"][j]["Name"])){
-                        wList.add(Weapon.create(name: data["weapons"][j]["Name"], quantity: wMap[data["weapons"][j]["Name"]], type: data["weapons"][j]["Type"], caliber: data["weapons"][j]["Caliber"], roundC: data["weapons"][j]["Round_Count"], magC: data["weapons"][j]["Mag_Count"]));
+                    for (int j = 0; j <= data["weapons"].length - 1; j++) {
+                      if (wMap.containsKey(data["weapons"][j]["Name"])) {
+                        wList.add(Weapon.create(
+                            name: data["weapons"][j]["Name"],
+                            quantity: wMap[data["weapons"][j]["Name"]],
+                            type: data["weapons"][j]["Type"],
+                            caliber: data["weapons"][j]["Caliber"],
+                            roundC: data["weapons"][j]["Round_Count"],
+                            magC: data["weapons"][j]["Mag_Count"]));
                       }
                     }
 
@@ -290,11 +313,13 @@ class _cameraPageState extends State<cameraPage> {
                     await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => confirmWeapons(wpnList: wList,),
+                          builder: (context) => confirmWeapons(
+                            wpnList: wList,
+                          ),
                         ));
-                     wMap.clear();
-                     wList.clear();
-                  } else{
+                    wMap.clear();
+                    wList.clear();
+                  } else {
                     scanning = false;
                   }
                   // wList = [];
@@ -339,9 +364,15 @@ class _cameraPageState extends State<cameraPage> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
-                        color: bg_login,
+                          color: bg_login,
                         ),
-                        child: Text('Weapon Added', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
+                        child: Text(
+                          'Weapon Added',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.white),
+                        ),
                       );
                     }),
                   ).show(context);

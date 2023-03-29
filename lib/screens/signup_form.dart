@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:zboryar_application/components/components.dart';
 import 'package:zboryar_application/screens/securityPage.dart';
+import '../database/hive/model/boxes.dart';
 import '../database/item.dart';
 import '../database/storage.dart';
 import '../main.dart';
@@ -112,6 +113,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 } else if (password.text.length < 6) {
                   showSnackBar(context, "Min 6 Character Password");
                 } else {
+                  Boxes.getWeapons().clear();
+                  Boxes.getSquadWeapons().clear();
                   final encryptData eUsername = encryptData(
                       "Username", username.text.toLowerCase().trim());
                   final encryptData ePassword = encryptData(
