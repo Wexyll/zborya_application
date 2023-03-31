@@ -46,6 +46,7 @@ class _generalInventoryState extends State<generalInventory> {
 
   @override
   Widget build(BuildContext context) {
+    //Displaying list of weapons in tiles
     return Scaffold(
       appBar: AppBar(
         title: Text("General Inventory"),
@@ -78,6 +79,7 @@ class _generalInventoryState extends State<generalInventory> {
     );
   }
 
+  //Popup modal function to add weapons
   addWeaponDialog() => showDialog(
       barrierDismissible: false,
       context: context,
@@ -181,8 +183,7 @@ class _generalInventoryState extends State<generalInventory> {
         );
       });
 
-
-
+  //Hive add weapon functionality
   addWeapon(String name, num quantity, String type, String caliber,
       String user, int rounds, int mags) async {
     final weapon = InventoryWeapon()
@@ -198,6 +199,7 @@ class _generalInventoryState extends State<generalInventory> {
     box.add(weapon);
   }
 
+  //This decides what will be built on the page, a message or lists of weapons
   Widget buildContent(List<InventoryWeapon> weapons) {
     if (weapons.isEmpty) {
       return Center(
@@ -262,6 +264,7 @@ class _generalInventoryState extends State<generalInventory> {
     }
   }
 
+  //Second modal to edit a weapon that is displayed
   Future openDialog(var weapons) => showDialog(
       barrierDismissible: false,
         context: context,

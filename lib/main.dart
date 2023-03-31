@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:zboryar_application/screens/navigationPage.dart';
 import 'package:zboryar_application/screens/login.dart';
 import 'package:zboryar_application/database/hive/model/invWeapon.dart';
@@ -18,11 +21,15 @@ void main() async {
 
   cameras = await availableCameras();
 
+  await Hive.initFlutter();
+
   final StorageService _storageService = StorageService();
+  
   String? _Value;
   Widget page;
   _Value = await _storageService.check();
 
+  //Deciding what page to initially show the user whether they're logged in or not
   if (_Value == null) {
     log("Null Value Found");
     page = LoginScreen();
@@ -31,8 +38,7 @@ void main() async {
     page = pinLogin();
   }
 
-  await Hive.initFlutter();
-
+  //Opening Hive boxes
   Hive.registerAdapter(InventoryWeaponAdapter());
   await Hive.openBox<InventoryWeapon>('inventoryWeapons');
 

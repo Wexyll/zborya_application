@@ -64,11 +64,13 @@ class _LoginFormState extends State<LoginForm> {
               key: _FormKey,
               child: Column(
                 children: [
+                  //Username text field
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultPadding),
                     child: LoginTextField(textController: username, hintText: "Username")
                   ),
+                  //Password Text field
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultPadding),
@@ -78,6 +80,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
 
+            //Login button.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: ElevatedButton(

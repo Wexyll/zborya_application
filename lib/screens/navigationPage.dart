@@ -27,6 +27,7 @@ class _navigationPageState extends State<navigationPage> {
 
 
   @override
+  //Build method of the navigation bar that will hold all of the seperate pages to be displayed
   Widget build(BuildContext context) => Scaffold(
     body: Center(child: _Nav.elementAt(_currentIndex)),
           bottomNavigationBar: Container(

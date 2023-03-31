@@ -29,6 +29,7 @@ class _confirmWeaponsState extends State<confirmWeapons> {
     var my_list = widget.wpnList.toList();
     print(my_list[0].quantity);
 
+    //Displaying listTiles of weapons
     return Scaffold(
       appBar: AppBar(
         title: const Text('Items Scanned'),

@@ -113,6 +113,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 } else if (password.text.length < 6) {
                   showSnackBar(context, "Min 6 Character Password");
                 } else {
+                  //Writing correct sign up data to the data base
                   Boxes.getWeapons().clear();
                   Boxes.getSquadWeapons().clear();
                   final encryptData eUsername = encryptData(

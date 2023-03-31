@@ -15,6 +15,7 @@ class pinLogin extends StatefulWidget {
 }
 
 class _pinLoginState extends State<pinLogin> {
+  //PIN Login page
   TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -29,6 +30,7 @@ class _pinLoginState extends State<pinLogin> {
       children: [
         Container(
           margin: EdgeInsets.symmetric(horizontal: 24),
+          //PIN text field
           child: PinCodeTextField(
             keyboardType: TextInputType.number,
             appContext: context,

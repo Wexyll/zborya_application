@@ -39,7 +39,7 @@ class _forgotPasswordState extends State<forgotPassword> {
   @override
   Widget build(BuildContext context) {
     int failure = 3;
-
+    //Build method of security questions
     return Scaffold(
       appBar: AppBar(
         title: Text("Security Questions"),
@@ -115,6 +115,7 @@ class _forgotPasswordState extends State<forgotPassword> {
                       } else {
                         failure = failure - 1;
                         if (failure <= 0) {
+                          //If fails = 0 delete all data
                           _storageService.deleteAllSecureData();
                           showSnackBar(context, "DATA DELETED");
                           Boxes.getWeapons().clear();

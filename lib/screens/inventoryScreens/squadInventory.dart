@@ -166,6 +166,8 @@ class _squadInventoryState extends State<squadInventory> {
   *
   *
    */
+
+  //Edit weapon modal
   openEditWeaponDetailsDialog(var weapon) => showDialog(
     barrierDismissible: false,
     context: context,
@@ -260,6 +262,7 @@ class _squadInventoryState extends State<squadInventory> {
     },
   );
 
+  //Add weapon modal
   addWeaponDialog() => showDialog(
       barrierDismissible: false,
       context: context,
@@ -379,6 +382,7 @@ class _squadInventoryState extends State<squadInventory> {
         );
       });
 
+  //Hive add weapon functionality
   addSquadWeapon(String name, String type, String caliber, String sNum,
       String soldier, String user) async {
     final weapon = squadWeapon()
@@ -393,6 +397,7 @@ class _squadInventoryState extends State<squadInventory> {
     box.add(weapon);
   }
 
+  //Getting categories of weapons from JSON
   Future getCategories() async {
     final String response = await rootBundle.loadString(
         'assets/json/categories.json');
@@ -400,6 +405,7 @@ class _squadInventoryState extends State<squadInventory> {
     categoriesList = data.toList();
   }
 
+  //Resetting text controllers
   resetModalFields() {
     typeController.clear();
     soldierController.clear();
@@ -409,11 +415,13 @@ class _squadInventoryState extends State<squadInventory> {
     dropDownValue = 'Sniper';
   }
 
+  //Getting currently logged in user
   Future<void> getUser() async {
     final StorageService _storageService = StorageService();
     username = (await _storageService.User())!;
   }
 
+  //Get calibers of firearms
   Future getCalibers() async {
     final String response = await rootBundle.loadString(
         'assets/json/caliber.json');

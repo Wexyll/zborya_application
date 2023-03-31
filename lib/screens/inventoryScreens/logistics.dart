@@ -42,6 +42,7 @@ class _logisticsPageState extends State<logisticsPage> {
     );
   }
 
+  //Building Tiles of Weapons
   Widget buildContent(List<InventoryWeapon> weapons) {
     if (weapons.isEmpty) {
       return Center(
@@ -91,6 +92,8 @@ class _logisticsPageState extends State<logisticsPage> {
       );
     }
   }
+
+  //Editing a weapons rounds and mag count
   Future openDialog(var weapons) => showDialog(
     barrierDismissible: false,
     context: context,
