@@ -390,13 +390,11 @@ class _cameraPageState extends State<cameraPage> {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.only(top: 0),
-          color: Colors.black,
-          child: Stack(
-            children: stackChildren,
-          ),
+      body: Container(
+        margin: EdgeInsets.only(top: 0),
+        color: Colors.black,
+        child: Stack(
+          children: stackChildren,
         ),
       ),
     );

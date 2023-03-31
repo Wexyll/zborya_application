@@ -28,48 +28,52 @@ class _navigationPageState extends State<navigationPage> {
 
   @override
   //Build method of the navigation bar that will hold all of the seperate pages to be displayed
-  Widget build(BuildContext context) => Scaffold(
-    body: Center(child: _Nav.elementAt(_currentIndex)),
-          bottomNavigationBar: Container(
-            color: bg_login,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: GNav(
-              tabBorderRadius: 28,
-              backgroundColor: bg_login,
-              color: Colors.white,
-              activeColor: selected,
-              tabBackgroundColor: highlight,
-              gap: 8,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 13),
-              selectedIndex: _currentIndex,
-              onTabChange: (index){
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              tabs: [
-                GButton(
-                  icon: Icons.storage,
-                  text: 'Squad',
-                ),
-                GButton(
-                  icon: Icons.data_usage,
-                  text: 'Inventory',
-                ),
-                GButton(
-                  icon: Icons.camera_alt,
-                  text: 'Camera',
-                ),
-                GButton(
-                  icon: Icons.note_alt,
-                  text: 'Logistics',
-                ),
-              ],
+  Widget build(BuildContext context) => SafeArea(
+    bottom: true,
+    top: false,
+    child: Scaffold(
+      body: Center(child: _Nav.elementAt(_currentIndex)),
+            bottomNavigationBar: Container(
+              color: bg_login,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+              child: GNav(
+                tabBorderRadius: 28,
+                backgroundColor: bg_login,
+                color: Colors.white,
+                activeColor: selected,
+                tabBackgroundColor: highlight,
+                gap: 8,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+                selectedIndex: _currentIndex,
+                onTabChange: (index){
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                tabs: [
+                  GButton(
+                    icon: Icons.storage,
+                    text: 'Squad',
+                  ),
+                  GButton(
+                    icon: Icons.data_usage,
+                    text: 'Inventory',
+                  ),
+                  GButton(
+                    icon: Icons.camera_alt,
+                    text: 'Camera',
+                  ),
+                  GButton(
+                    icon: Icons.note_alt,
+                    text: 'Logistics',
+                  ),
+                ],
+              ),
+              ),
             ),
-            ),
-          ),
-    drawer: NavigationDrawer(),
+      drawer: NavigationDrawer(),
+    ),
   );
 }
 class NavigationDrawer extends StatelessWidget{

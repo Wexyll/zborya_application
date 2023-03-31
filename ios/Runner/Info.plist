@@ -47,5 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+    <string>To add weapons to the DB</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>To add weapons to the DB</string>
 </dict>
 </plist>

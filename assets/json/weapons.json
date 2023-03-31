@@ -7,7 +7,7 @@
     "Mag_Count": 5
   },
     {
-      "Name": "AK47",
+      "Name": "AK_762",
       "Type": "Rifle",
       "Caliber": "7.62x39mm",
       "Round_Count": 30,
@@ -25,6 +25,181 @@
       "Type": "Rifle",
       "Caliber": "5.56x45mm NATO",
       "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "AK_545",
+      "Type": "Rifle",
+      "Caliber": "5.45x39mm",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "338_AWM",
+      "Type": "Sniper",
+      "Caliber": ".338 Lapua Magnum",
+      "Round_Count": 10,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Barret_M_98B",
+      "Type": "Sniper",
+      "Caliber": "12.7x99mm NATO",
+      "Round_Count": 10,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "CZ_805_BREN",
+      "Type": "Rifle",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "FN_FAL",
+      "Type": "Rifle",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count":  20,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Glock_17",
+      "Type": "Pistol",
+      "Caliber": "9x19mm NATO",
+      "Round_Count": 12,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "HK416",
+      "Type": "Rifle",
+      "Caliber": "5.56x45mm NATO",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "M2",
+      "Type": "MG",
+      "Caliber": "12.7x99mm NATO",
+      "Round_Count": 100,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "M240",
+      "Type": "MG",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count": 100,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "IWI_Tavor",
+      "Type": "Rifle",
+      "Caliber": "5.56x45mm NATO",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "KRISS_Vector",
+      "Type": "SMG",
+      "Caliber": ".45 ACP",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "M9",
+      "Type": "Pistol",
+      "Caliber": "9x19mm NATO",
+      "Round_Count": 15,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Makarov_PM",
+      "Type": "Pistol",
+      "Caliber": "9x18mm",
+      "Round_Count": 16,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Malyuk",
+      "Type": "Rifle",
+      "Caliber": "5.45x39mm",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "MG42",
+      "Type": "MG",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count": 100,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Mossberg_500",
+      "Type": "Shotgun",
+      "Caliber": "12x70mm",
+      "Round_Count": 8,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "PKM",
+      "Type": "MG",
+      "Caliber": "7.62x54mmR",
+      "Round_Count": 100,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Remington_700",
+      "Type": "Sniper",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count": 10,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Saiga_12",
+      "Type": "Shotgun",
+      "Caliber": "12x70mm",
+      "Round_Count": 10,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "SIG_Sauer_M18",
+      "Type": "Pistol",
+      "Caliber": "9x19mm NATO",
+      "Round_Count": 17,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Steyr_AUG",
+      "Type": "Rifle",
+      "Caliber": "5.56x45mm NATO",
+      "Round_Count": 30,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "SVD",
+      "Type": "Sniper",
+      "Caliber": "7.62x54mmR",
+      "Round_Count": 10,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "TT_33",
+      "Type": "Pistol",
+      "Caliber": "7.62x25mm",
+      "Round_Count": 8,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "VSS_Vintorez",
+      "Type": "Sniper",
+      "Caliber": "9x39mm",
+      "Round_Count": 20,
+      "Mag_Count": 5
+    },
+    {
+      "Name": "Zbroyar_Z008",
+      "Type": "Sniper",
+      "Caliber": "7.62x51mm NATO",
+      "Round_Count": 20,
       "Mag_Count": 5
     }
   ]

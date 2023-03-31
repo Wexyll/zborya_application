@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:zboryar_application/components/components.dart';
 import '../database/hive/model/boxes.dart';
 import '../database/item.dart';
@@ -39,115 +40,121 @@ class _forgotPasswordState extends State<forgotPassword> {
   Widget build(BuildContext context) {
     int failure = 3;
     //Build method of security questions
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Security Questions"),
-        backgroundColor: bg_login,
-      ),
-      backgroundColor: bg_reg,
-      body: ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Spacer(),
-                SizedBox(
-                  height: 60,
-                ),
-                Text(
-                  "Zbroya",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 40,
+    return KeyboardDismisser(
+      gestures: [
+        GestureType.onTap,
+        GestureType.onPanUpdateDownDirection,
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Security Questions"),
+          backgroundColor: bg_login,
+        ),
+        backgroundColor: bg_reg,
+        body: ListView(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //Spacer(),
+                  SizedBox(
+                    height: 60,
                   ),
-                ),
-
-                SizedBox(
-                  height: 26,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-                  child: Text(
-                    "Security Questions \n"
-                    "Attempts Left : ${failure}",
-                    textAlign: TextAlign.center,
+                  Text(
+                    "Zbroya",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 40,
                     ),
                   ),
-                ),
 
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: LoginTextField(
-                        textController: answer1,
-                        hintText: "${widget.question1}")),
-
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: LoginTextField(
-                        textController: answer2,
-                        hintText: "${widget.question2}")),
-
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final StorageService _storageService = StorageService();
-                      String? A1 = await _storageService.Answer("Answer1");
-                      String? A2 = await _storageService.Answer("Answer2");
-                      String? pass = await _storageService.Password();
-                      if (answer1.text.toLowerCase().trim() == A1 &&
-                          answer2.text.toLowerCase().trim() == A2) {
-                        failure = 3;
-                        showSnackBar(context, pass!);
-                      } else {
-                        failure = failure - 1;
-                        if (failure <= 0) {
-                          //If fails = 0 delete all data
-                          _storageService.deleteAllSecureData();
-                          showSnackBar(context, "DATA DELETED");
-                          Boxes.getWeapons().clear();
-                          Boxes.getSquadWeapons().clear();
-                          Navigator.pop(context);
-                        } else {
-                          showSnackBar(context, "Warning: Wrong Answers");
-                        }
-                        setState(() {});
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white38,
+                  SizedBox(
+                    height: 26,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                    child: Text(
+                      "Security Questions \n"
+                      "Attempts Left : ${failure}",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
                     ),
-                    child: Center(
-                      child: Text(
-                        "Save Details",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  ),
+
+                  Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultPadding),
+                      child: LoginTextField(
+                          textController: answer1,
+                          hintText: "${widget.question1}")),
+
+                  Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultPadding),
+                      child: LoginTextField(
+                          textController: answer2,
+                          hintText: "${widget.question2}")),
+
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final StorageService _storageService = StorageService();
+                        String? A1 = await _storageService.Answer("Answer1");
+                        String? A2 = await _storageService.Answer("Answer2");
+                        String? pass = await _storageService.Password();
+                        if (answer1.text.toLowerCase().trim() == A1 &&
+                            answer2.text.toLowerCase().trim() == A2) {
+                          failure = 3;
+                          showSnackBar(context, pass!);
+                        } else {
+                          failure = failure - 1;
+                          if (failure <= 0) {
+                            //If fails = 0 delete all data
+                            _storageService.deleteAllSecureData();
+                            showSnackBar(context, "DATA DELETED");
+                            Boxes.getWeapons().clear();
+                            Boxes.getSquadWeapons().clear();
+                            Navigator.pop(context);
+                          } else {
+                            showSnackBar(context, "Warning: Wrong Answers");
+                          }
+                          setState(() {});
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white38,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Save Details",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                /*Spacer(
-                flex: 2,
-              )*/
-              ],
+                  /*Spacer(
+                  flex: 2,
+                )*/
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

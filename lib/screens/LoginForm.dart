@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:zboryar_application/components/components.dart';
 import 'package:zboryar_application/constants/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -41,128 +42,134 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.13),
-      child: Form(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //Spacer(),
-            Text(
-              "Zbroya",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 40,
-              ),
-            ),
-            SizedBox(
-              height: 26,
-            ),
-            Form(
-              key: _FormKey,
-              child: Column(
-                children: [
-                  //Username text field
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: LoginTextField(textController: username, hintText: "Username")
-                  ),
-                  //Password Text field
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: LoginTextField(textController: password, hintText: "Password", isPass: true)
-                  ),
-                ],
-              ),
-            ),
-
-            //Login button.
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: ElevatedButton(
-                onPressed: () async {
-                if(_FormKey.currentState!.validate()) {
-                  _user = await _storageService.User();
-                  _pass = await _storageService.Pass();
-                  if (_user == null) {
-                    failure = failure - 1;
-                    showSnackBar(context, "No Users Created");
-                  } else {
-                    if (_user != username.text.toLowerCase().trim()) {
-                      failure = failure - 1;
-                      showSnackBar(context, "Username is Incorrect");
-                    } else if (_pass != password.text.trim()) {
-                      failure = failure - 1;
-                      showSnackBar(context, "Password is Incorrect");
-                    } else {
-                      failure = 3;
-                      final encryptData eIsLoggedIn =
-                      encryptData("isLoggedIn", "true");
-                      _storageService.writeSecureData(eIsLoggedIn);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => navigationPage()),
-                      );
-                    }
-                    if (failure == 1) {
-                      showSnackBar(context, "One Attempt Remaining");
-                    }
-                    if (failure <= 0) {
-                      final StorageService _storageService = StorageService();
-                      _storageService.deleteAllSecureData();
-                      showSnackBar(context, "FAIL: DATA DELETED");
-                      Boxes.getWeapons().clear();
-                      Boxes.getSquadWeapons().clear();
-                    }
-                  };
-                }
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.white38,
+    return KeyboardDismisser(
+      gestures: [
+        GestureType.onTap,
+        GestureType.onPanUpdateDownDirection,
+      ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.13),
+        child: Form(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Spacer(),
+              Text(
+                "Zbroya",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 40,
                 ),
-                child: Center(
-                  child: Text(
-                    "Sign In",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              ),
+              SizedBox(
+                height: 26,
+              ),
+              Form(
+                key: _FormKey,
+                child: Column(
+                  children: [
+                    //Username text field
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultPadding),
+                      child: LoginTextField(textController: username, hintText: "Username")
+                    ),
+                    //Password Text field
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultPadding),
+                      child: LoginTextField(textController: password, hintText: "Password", isPass: true)
+                    ),
+                  ],
+                ),
+              ),
+
+              //Login button.
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                  if(_FormKey.currentState!.validate()) {
+                    _user = await _storageService.User();
+                    _pass = await _storageService.Pass();
+                    if (_user == null) {
+                      failure = failure - 1;
+                      showSnackBar(context, "No Users Created");
+                    } else {
+                      if (_user != username.text.toLowerCase().trim()) {
+                        failure = failure - 1;
+                        showSnackBar(context, "Username is Incorrect");
+                      } else if (_pass != password.text.trim()) {
+                        failure = failure - 1;
+                        showSnackBar(context, "Password is Incorrect");
+                      } else {
+                        failure = 3;
+                        final encryptData eIsLoggedIn =
+                        encryptData("isLoggedIn", "true");
+                        _storageService.writeSecureData(eIsLoggedIn);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => navigationPage()),
+                        );
+                      }
+                      if (failure == 1) {
+                        showSnackBar(context, "One Attempt Remaining");
+                      }
+                      if (failure <= 0) {
+                        final StorageService _storageService = StorageService();
+                        _storageService.deleteAllSecureData();
+                        showSnackBar(context, "FAIL: DATA DELETED");
+                        Boxes.getWeapons().clear();
+                        Boxes.getSquadWeapons().clear();
+                      }
+                    };
+                  }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white38,
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Sign In",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: () async {
-                final StorageService _storageService = StorageService();
-                String? _Question1 = await _storageService.Question1();
-                String? _Question2 = await _storageService.Question2();
+              TextButton(
+                onPressed: () async {
+                  final StorageService _storageService = StorageService();
+                  String? _Question1 = await _storageService.Question1();
+                  String? _Question2 = await _storageService.Question2();
 
-                if (_Question1 == null) {
-                  showSnackBar(context, "No Account Exist");
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => forgotPassword(
-                            question1: _Question1, question2: _Question2)),
-                  );
-                }
-              },
-              child: Text(
-                "Forgot Password?",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15),
+                  if (_Question1 == null) {
+                    showSnackBar(context, "No Account Exist");
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => forgotPassword(
+                              question1: _Question1, question2: _Question2)),
+                    );
+                  }
+                },
+                child: Text(
+                  "Forgot Password?",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
