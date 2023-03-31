@@ -201,6 +201,13 @@
       "Caliber": "7.62x51mm NATO",
       "Round_Count": 20,
       "Mag_Count": 5
+    },
+    {
+      "Name": "FN_SCAR_L",
+      "Type": "Rifle",
+      "Caliber": "5.56x45mm NATO",
+      "Round_Count": 30,
+      "Mag_Count": 5
     }
   ]
 }
