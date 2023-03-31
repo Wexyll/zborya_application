@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:zboryar_application/components/components.dart';
 import '../database/hive/model/boxes.dart';
 import '../database/item.dart';

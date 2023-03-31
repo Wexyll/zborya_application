@@ -85,6 +85,7 @@ class _LoginFormState extends State<LoginForm> {
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: ElevatedButton(
                 onPressed: () async {
+                if(_FormKey.currentState!.validate()) {
                   _user = await _storageService.User();
                   _pass = await _storageService.Pass();
                   if (_user == null) {
@@ -119,6 +120,7 @@ class _LoginFormState extends State<LoginForm> {
                       Boxes.getSquadWeapons().clear();
                     }
                   };
+                }
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.white38,

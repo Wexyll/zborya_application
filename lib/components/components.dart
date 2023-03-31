@@ -1,7 +1,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:getwidget/components/list_tile/gf_list_tile.dart';
 import 'package:zboryar_application/database/hive/model/squadWeapon.dart';
 
@@ -12,7 +12,7 @@ Widget buildTextField(
         {required TextEditingController textController,
         required String hintText}) =>
     TextFormField(
-      validator: FormBuilderValidators.required(),
+      validator: ValidationBuilder().required("This field is required.").build(),
       controller: textController,
       decoration: InputDecoration(
         hintText: hintText,
@@ -76,7 +76,7 @@ Widget LoginTextField(
     TextFormField(
       controller: textController,
       obscureText: isPass,
-      validator: FormBuilderValidators.required(),
+      validator: ValidationBuilder().required("This field is required.").build(),
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
